@@ -1,0 +1,122 @@
+Voici les classes suggérées pour votre diagramme de classe (Espace d'Emploi), basées sur l'analyse de votre code actuel (Controlleurs et Vues) :
+
+1. Class User (Utilisateur)
+   - Attributs :
+     - id: Integer
+     - name: String
+     - email: String
+     - password: String
+     - role: Enum ('candidate', 'recruiter', 'admin')
+     - avatar: String (URL)
+     - bio: Text
+     - location: String
+     - phone: String
+     - created_at: DateTime
+
+2. Class Profile (Détails Candidat)
+   - *Relation : 1-to-1 avec User (si role='candidate')*
+   - Attributs :
+     - id: Integer
+     - user_id: Integer (FK)
+     - title: String (ex: 'Frontend Engineer')
+     - resume_url: String
+     - website: String
+     - github_link: String
+     - linkedin_link: String
+
+3. Class Company (Entreprise)
+   - *Relation : 1-to-Many avec User (Recruiters) et JobOffer*
+   - Attributs :
+     - id: Integer
+     - name: String
+     - logo: String
+     - description: Text
+     - website: String
+     - location: String
+     - industry: String
+     - size: String
+
+4. Class JobOffer (Offre d'emploi / Stage)
+   - *Relation : Many-to-One avec Company*
+   - Attributs :
+     - id: Integer
+     - company_id: Integer (FK)
+     - recruiter_id: Integer (FK)
+     - title: String
+     - description: Text
+     - type: Enum ('Stage', 'CDI', 'CDD', 'Freelance')
+     - location: String
+     - salary_range: String
+     - duration: String (pour stage)
+     - is_trending: Boolean
+     - created_at: DateTime
+     - deadline: DateTime
+
+5. Class Application (Candidature)
+   - *Relation : Many-to-One avec User et JobOffer*
+   - Attributs :
+     - id: Integer
+     - user_id: Integer (FK)
+     - job_offer_id: Integer (FK)
+     - status: Enum ('pending', 'accepted', 'rejected')
+     - cover_letter: Text
+     - created_at: DateTime
+
+6. Class Education (Formation)
+   - *Relation : Many-to-One avec User*
+   - Attributs :
+     - id: Integer
+     - user_id: Integer (FK)
+     - school: String
+     - degree: String
+     - field_of_study: String
+     - start_date: Date
+     - end_date: Date
+     - description: Text
+
+7. Class Experience (Expérience Pro)
+   - *Relation : Many-to-One avec User*
+   - Attributs :
+     - id: Integer
+     - user_id: Integer (FK)
+     - company_name: String
+     - title: String
+     - start_date: Date
+     - end_date: Date
+     - description: Text
+
+8. Class Project (Portfolio)
+   - *Relation : Many-to-One avec User*
+   - Attributs :
+     - id: Integer
+     - user_id: Integer (FK)
+     - title: String
+     - description: Text
+     - image_url: String
+     - link: String
+     - category: String
+
+9. Class Skill (Compétence)
+   - *Relation : Many-to-Many avec User et JobOffer*
+   - Attributs :
+     - id: Integer
+     - name: String
+
+10. Class NetworkConnection (Réseau)
+    - *Relation : Relie deux Users*
+    - Attributs :
+      - id: Integer
+      - requester_id: Integer (FK -> User)
+      - recipient_id: Integer (FK -> User)
+      - status: Enum ('pending', 'accepted')
+      - created_at: DateTime
+
+11. Class Message (Chat)
+    - *Relation : Relie deux Users*
+    - Attributs :
+      - id: Integer
+      - sender_id: Integer (FK -> User)
+      - receiver_id: Integer (FK -> User)
+      - content: Text
+      - read_at: DateTime
+      - created_at: DateTime
