@@ -11,16 +11,16 @@ return new class extends Migration
      */
     public function up(): void
     {
-        DB::statement("CREATE TYPE user_role AS ENUM ('devloppeur', 'recruiter')");
         Schema::create( 'users' , function(Blueprint $table){
             $table->id();
             $table->string('name');
-            $table->string('email')->unique();
+            $table->string('email')->unique()->index();
             $table->string('password');
             $table->enum('role',['devloppeur','recruiter']);
             $table->string('photo')->nullable();
             $table->text('bio')->nullable();
             $table->string('phone')->nullable();
+            $table->jsonb('amis')->nullable();
             $table->timestamps();
         });
     }
