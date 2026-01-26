@@ -17,6 +17,7 @@ return new class extends Migration
             $table->string('logo')->nullable();
             $table->text('description');
             $table->string('location');
+            $table->foreignId('recruiter_id')->constrained('users')->onDelete('cascade');
             $table->timestamp('create');
         });
     }
