@@ -5,21 +5,21 @@
 -- CREATE EXTENSION IF NOT EXISTS "uuid-ossp";
 
 -- 1. Users Table
-CREATE TYPE user_role AS ENUM ('candidate', 'recruiter', 'admin');
+-- CREATE TYPE user_role AS ENUM ('candidate', 'recruiter', 'admin');
 
-CREATE TABLE users (
-    id SERIAL PRIMARY KEY,
-    name VARCHAR(255) NOT NULL,
-    email VARCHAR(255) UNIQUE NOT NULL,
-    password VARCHAR(255) NOT NULL,
-    role user_role NOT NULL,
-    avatar VARCHAR(255),
-    bio TEXT,
-    location VARCHAR(255),
-    phone VARCHAR(50),
-    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-    updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
-);
+-- CREATE TABLE users (
+--     id SERIAL PRIMARY KEY,
+--     name VARCHAR(255) NOT NULL,
+--     email VARCHAR(255) UNIQUE NOT NULL,
+--     password VARCHAR(255) NOT NULL,
+--     role user_role NOT NULL,
+--     avatar VARCHAR(255),
+--     bio TEXT,
+--     location VARCHAR(255),
+--     phone VARCHAR(50),
+--     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+--     updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+-- );
 
 -- 2. Profiles Table (1-to-1 with Users)
 CREATE TABLE profiles (
@@ -48,12 +48,6 @@ CREATE TABLE companies (
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
     updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
 );
-
--- Relation: Users (Recruiters) link to Company? 
--- The diagram implies Recruiters belong to a company, but doesn't explicitly show a company_id on User.
--- However, JobOffer has recruiter_id AND company_id. 
--- For strict adherence to the diagram provided, we won't add company_id to users table unless implied.
--- Assuming Recruiter manages offers for a specific company in the JobOffer context.
 
 -- 4. Job Offers Table
 CREATE TYPE job_type AS ENUM ('Stage', 'CDI', 'CDD', 'Freelance');
@@ -188,3 +182,4 @@ CREATE INDEX idx_users_email ON users(email);
 CREATE INDEX idx_job_offers_company ON job_offers(company_id);
 CREATE INDEX idx_applications_user ON applications(user_id);
 CREATE INDEX idx_applications_job ON applications(job_offer_id);
+    
