@@ -8,7 +8,7 @@ class Recruteur extends User
 {
     protected static function booted()
     {
-        static::addGlobalScope('recruiter', function (Builder $query) {
+        static::addGlobalScope('recruteurs', function (Builder $query) {
             $query->where('role', 'recruiter');
         });
     }
