@@ -16,6 +16,8 @@ Route::get('/recruteurs', [UserController::class, 'recrutement'])->name('recrute
 Route::get('/login', [AuthController::class, 'showLogin'])->name('login');
 Route::get('/register', [AuthController::class, 'showRegister'])->name('register');
 
+Route::post('/register' ,[AuthController::class , 'store'])->name('registerPost');
+
 // Profile
 Route::get('/profile/{id?}', [UserController::class, 'profile'])->name('profile');
 
