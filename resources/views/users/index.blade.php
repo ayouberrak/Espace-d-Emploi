@@ -74,11 +74,13 @@
 
                         <!-- Skills / Tags -->
                         <div class="flex flex-wrap justify-center gap-1.5 mb-6">
-                            @foreach(array_slice($user['skills'], 0, 3) as $skill)
-                                <span class="px-2 py-1 bg-slate-50 border border-slate-100 rounded-lg text-[10px] font-bold text-slate-500 uppercase tracking-wide group-hover:bg-white group-hover:shadow-sm transition-all">
-                                    {{ $skill }}
-                                </span>
-                            @endforeach
+                            @if(isset($user['skills']) && is_array($user['skills']))
+                                @foreach(array_slice($user['skills'], 0, 3) as $skill)
+                                    <span class="px-2 py-1 bg-slate-50 border border-slate-100 rounded-lg text-[10px] font-bold text-slate-500 uppercase tracking-wide group-hover:bg-white group-hover:shadow-sm transition-all">
+                                        {{ $skill }}
+                                    </span>
+                                @endforeach
+                            @endif
                         </div>
 
                         <!-- Action -->
