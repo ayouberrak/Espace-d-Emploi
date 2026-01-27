@@ -50,10 +50,14 @@
                 <p class="text-slate-500 font-medium">Entrez vos identifiants pour accéder à votre espace.</p>
             </div>
 
-            <form action="{{ route('dashboard') }}" method="GET" class="space-y-6">
+            <form action="{{ route('loginPost') }}" method="Post" class="space-y-6">
+                @csrf
                 <div class="space-y-2">
                     <label class="text-xs font-black uppercase tracking-widest text-slate-900">Email</label>
-                    <input type="email" value="ayoub@eligence.ma" class="w-full bg-slate-50 border border-slate-200 rounded-xl py-4 px-5 font-semibold focus:bg-white focus:ring-2 focus:ring-slate-900 focus:border-transparent transition-all outline-none text-slate-900">
+                    <input name="email" type="email" value="{{ old('email') }}" class="w-full bg-slate-50 border @error('email') border-red-500 @else border-slate-200 @enderror rounded-xl py-4 px-5 font-semibold focus:bg-white focus:ring-2 focus:ring-slate-900 focus:border-transparent transition-all outline-none text-slate-900" required autofocus>
+                    @error('email')
+                        <p class="text-red-500 text-xs font-bold mt-1">{{ $message }}</p>
+                    @enderror
                 </div>
 
                 <div class="space-y-2">
@@ -61,7 +65,10 @@
                         <label class="text-xs font-black uppercase tracking-widest text-slate-900">Mot de passe</label>
                         <a href="#" class="text-xs font-bold text-slate-400 hover:text-slate-900">Oublié ?</a>
                     </div>
-                    <input type="password" value="password" class="w-full bg-slate-50 border border-slate-200 rounded-xl py-4 px-5 font-semibold focus:bg-white focus:ring-2 focus:ring-slate-900 focus:border-transparent transition-all outline-none text-slate-900">
+                    <input name="password" type="password" class="w-full bg-slate-50 border @error('password') border-red-500 @else border-slate-200 @enderror rounded-xl py-4 px-5 font-semibold focus:bg-white focus:ring-2 focus:ring-slate-900 focus:border-transparent transition-all outline-none text-slate-900" required>
+                    @error('password')
+                        <p class="text-red-500 text-xs font-bold mt-1">{{ $message }}</p>
+                    @enderror
                 </div>
 
                 <button type="submit" class="w-full bg-slate-900 text-white font-black py-4 rounded-xl hover:bg-primary-600 hover:shadow-lg transition-all flex items-center justify-center gap-2 group">
