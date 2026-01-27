@@ -30,20 +30,16 @@
             <div class="relative bg-white rounded-[2.5rem] p-8 border border-slate-100 shadow-[0_8px_30px_rgb(0,0,0,0.04)] hover:-translate-y-2 transition-transform duration-500 flex flex-col items-center text-center h-full">
                 
                 <div class="w-28 h-28 rounded-full p-1 bg-gradient-to-tr from-primary-100 to-indigo-100 mb-6">
-                    <img class="w-full h-full rounded-full object-cover border-4 border-white" src="{{ $recruiter['avatar'] ?? 'https://i.pravatar.cc/150?u='.$recruiter['id'] }}" alt="{{ $recruiter['name'] }}">
+                    <img class="w-full h-full rounded-full object-cover border-4 border-white" src="{{ $recruiter['aaa'] ?? 'https://i.pinimg.com/1200x/f5/bb/d5/f5bbd5645d8ef97637838d1ca92297b6.jpg' }}" alt="{{ $recruiter['name'] }}">
                 </div>
 
                 <h3 class="text-xl font-black text-slate-900 font-outfit mb-1">{{ $recruiter['name'] }}</h3>
-                <p class="text-xs font-bold text-primary-600 uppercase tracking-widest mb-4">{{ $recruiter['company'] }}</p>
                 
                 <p class="text-sm text-slate-500 font-medium leading-relaxed mb-8 line-clamp-3">
                     {{ $recruiter['bio'] }}
                 </p>
 
                 <div class="mt-auto w-full space-y-3">
-                    <button class="w-full bg-slate-900 text-white font-bold py-3 rounded-xl shadow-lg hover:bg-primary-600 transition-all text-xs uppercase tracking-wide">
-                        Voir Profil
-                    </button>
                     <button class="w-full bg-white border border-slate-200 text-slate-900 font-bold py-3 rounded-xl hover:bg-slate-50 transition-all text-xs uppercase tracking-wide">
                         Message
                     </button>
