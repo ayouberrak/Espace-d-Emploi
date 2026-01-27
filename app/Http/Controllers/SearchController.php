@@ -4,7 +4,7 @@ namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
 
-class SearchController extends Controller
+class SearchController extends Controller 
 {
     private $users = [
         ['id' => 1, 'name' => 'John Doe', 'specialty' => 'Développement Web', 'photo' => 'https://i.pravatar.cc/150?u=1'],
