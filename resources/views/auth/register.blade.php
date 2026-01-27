@@ -20,41 +20,42 @@
                 <p class="text-slate-400 font-medium">Créez votre profil professionnel en quelques secondes.</p>
             </div>
 
-            <form action="{{ route('dashboard') }}" method="GET" class="space-y-5">
+            <form action="{{ route('registerPost') }}" method="post" class="space-y-5">
+                @csrf 
+
                 <div class="grid grid-cols-2 gap-4">
                     <div class="space-y-1">
                         <label class="text-[10px] font-black uppercase tracking-widest text-slate-500 pl-1">Prénom</label>
-                        <input type="text" placeholder="Ayoub" class="w-full bg-white/5 border border-white/10 rounded-xl py-3 px-4 font-bold text-white focus:bg-white/10 focus:border-primary-500 transition-all outline-none">
+                        <input type="text" name="first_name" placeholder="Ayoub" class="w-full bg-white/5 border border-white/10 rounded-xl py-3 px-4 font-bold text-white focus:bg-white/10 focus:border-primary-500 transition-all outline-none">
                     </div>
                     <div class="space-y-1">
                         <label class="text-[10px] font-black uppercase tracking-widest text-slate-500 pl-1">Nom</label>
-                        <input type="text" placeholder="Errak" class="w-full bg-white/5 border border-white/10 rounded-xl py-3 px-4 font-bold text-white focus:bg-white/10 focus:border-primary-500 transition-all outline-none">
+                        <input type="text" name="last_name" placeholder="Errak" class="w-full bg-white/5 border border-white/10 rounded-xl py-3 px-4 font-bold text-white focus:bg-white/10 focus:border-primary-500 transition-all outline-none">
                     </div>
                 </div>
 
                 <div class="space-y-1">
                     <label class="text-[10px] font-black uppercase tracking-widest text-slate-500 pl-1">Email</label>
-                    <input type="email" placeholder="contact@example.com" class="w-full bg-white/5 border border-white/10 rounded-xl py-3 px-4 font-bold text-white focus:bg-white/10 focus:border-primary-500 transition-all outline-none">
+                    <input type="email" name="email" placeholder="contact@example.com" class="w-full bg-white/5 border border-white/10 rounded-xl py-3 px-4 font-bold text-white focus:bg-white/10 focus:border-primary-500 transition-all outline-none">
                 </div>
 
                 <div class="space-y-1">
                     <label class="text-[10px] font-black uppercase tracking-widest text-slate-500 pl-1">Mot de passe</label>
-                    <input type="password" placeholder="••••••••" class="w-full bg-white/5 border border-white/10 rounded-xl py-3 px-4 font-bold text-white focus:bg-white/10 focus:border-primary-500 transition-all outline-none">
+                    <input type="password" name="password" placeholder="••••••••" class="w-full bg-white/5 border border-white/10 rounded-xl py-3 px-4 font-bold text-white focus:bg-white/10 focus:border-primary-500 transition-all outline-none">
                 </div>
 
-                <!-- Role Selection -->
                 <div class="grid grid-cols-2 gap-4 pt-2">
                     <label class="cursor-pointer group">
-                        <input type="radio" name="role" class="peer hidden" checked>
+                        <input type="radio" name="role" value="devloppeur" class="peer hidden" checked>
                         <div class="p-4 rounded-xl border border-white/10 bg-white/5 peer-checked:bg-primary-600 peer-checked:border-primary-600 transition-all text-center">
-                            <span class="block text-white font-black text-sm">Candidat</span>
+                            <span class="block text-white font-black text-sm">devloppeur</span>
                             <span class="block text-slate-400 text-[10px] peer-checked:text-primary-200">Je cherche un job</span>
                         </div>
                     </label>
                     <label class="cursor-pointer group">
-                        <input type="radio" name="role" class="peer hidden">
+                        <input type="radio" name="role" value="recruiter" class="peer hidden">
                         <div class="p-4 rounded-xl border border-white/10 bg-white/5 peer-checked:bg-primary-600 peer-checked:border-primary-600 transition-all text-center">
-                            <span class="block text-white font-black text-sm">Recruteur</span>
+                            <span class="block text-white font-black text-sm">recruiter</span>
                             <span class="block text-slate-400 text-[10px] peer-checked:text-primary-200">Je recrute</span>
                         </div>
                     </label>
@@ -66,6 +67,7 @@
                     </button>
                 </div>
             </form>
+
 
             <p class="text-center text-sm text-slate-500 font-medium">
                 Déjà membre ? <a href="{{ route('login') }}" class="text-white font-black hover:underline">Se Connecter</a>
