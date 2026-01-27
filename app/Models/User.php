@@ -4,10 +4,13 @@ namespace App\Models;
 
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
+use App\Models\Profil;
 
-abstract class User extends Authenticatable
+class User extends Authenticatable
 {
     use Notifiable;
+
+    protected $table = 'users';
 
     protected $fillable = [
         'name',
@@ -52,5 +55,9 @@ abstract class User extends Authenticatable
     public function notifications()
     {
         return $this->hasMany(Notifications::class, 'user_id');
+    }
+
+    public function profile(){
+        return $this->hasOne(Profil::class, 'user_id');
     }
 }
