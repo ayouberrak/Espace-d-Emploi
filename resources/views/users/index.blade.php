@@ -10,6 +10,9 @@
         <h1 class="text-5xl md:text-6xl font-black text-slate-900 font-outfit mb-6 tracking-tight leading-tight">
             Découvrez l'<span class="text-transparent bg-clip-text bg-gradient-to-r from-primary-600 to-indigo-600">Excellence.</span>
         </h1>
+        <!-- <p>Role: {{ session('role') }}</p>
+        <p>User ID: {{ session('user_id') }}</p> -->
+
         <p class="text-lg text-slate-500 mb-10 font-medium">Rejoignez un réseau exclusif de talents et d'entreprises visionnaires.</p>
 
         <!-- Search Bar -->
@@ -19,7 +22,7 @@
                 <div class="pl-6 text-slate-400">
                     <svg class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" /></svg>
                 </div>
-                <input type="text" name="search" value="{{ $search }}" placeholder="Rechercher..." class="flex-grow bg-transparent border-none py-3 px-4 text-slate-900 placeholder:text-slate-400 focus:ring-0 font-semibold outline-none">
+                <input type="text" name="search"  placeholder="Rechercher..." class="flex-grow bg-transparent border-none py-3 px-4 text-slate-900 placeholder:text-slate-400 focus:ring-0 font-semibold outline-none">
                 <button type="submit" class="bg-slate-900 text-white px-6 py-2.5 rounded-full text-sm font-bold hover:bg-primary-600 transition-colors">Go</button>
             </div>
         </form>
