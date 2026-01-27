@@ -2,20 +2,24 @@
 
 namespace App\Models;
 
+use Illuminate\Database\Eloquent\Builder;
+
 class Recruteur extends User
 {
-    public function __construct(
-        ?int $id = null,
-        string $name = "",
-        string $email = "",
-        string $password = "",
-        string $role = "recruiter",
-        ?string $photo = null,
-        ?string $bio = null,
-        ?string $phone = null,
-        ?string $created_at = null,
-        ?string $updated_at = null
-    ) {
-        parent::__construct($id, $name, $email, $password, $role, $photo, $bio, $phone, $created_at, $updated_at);
+    protected static function booted()
+    {
+        static::addGlobalScope('recruiter', function (Builder $query) {
+            $query->where('role', 'recruiter');
+        });
+    }
+
+    public function entreprises()
+    {
+        return $this->hasMany(Entreprise::class, 'recruiter_id');
+    }
+
+    public function offres()
+    {
+        return $this->hasMany(Offres::class, 'recruiter_id');
     }
 }
