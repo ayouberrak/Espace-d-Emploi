@@ -22,6 +22,7 @@ return new class extends Migration
             $table->string('phone')->nullable();
             $table->jsonb('amis')->nullable();
             $table->timestamps();
+            
         });
     }
 
