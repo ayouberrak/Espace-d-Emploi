@@ -26,39 +26,52 @@
                 <div class="grid grid-cols-2 gap-4">
                     <div class="space-y-1">
                         <label class="text-[10px] font-black uppercase tracking-widest text-slate-500 pl-1">Prénom</label>
-                        <input type="text" name="first_name" placeholder="Ayoub" class="w-full bg-white/5 border border-white/10 rounded-xl py-3 px-4 font-bold text-white focus:bg-white/10 focus:border-primary-500 transition-all outline-none">
+                        <input type="text" name="first_name" value="{{ old('first_name') }}" placeholder="Ayoub" class="w-full bg-white/5 border @error('first_name') border-red-500 @else border-white/10 @enderror rounded-xl py-3 px-4 font-bold text-white focus:bg-white/10 focus:border-primary-500 transition-all outline-none">
+                        @error('first_name') <p class="text-red-500 text-[10px] pl-1">{{ $message }}</p> @enderror
                     </div>
                     <div class="space-y-1">
                         <label class="text-[10px] font-black uppercase tracking-widest text-slate-500 pl-1">Nom</label>
-                        <input type="text" name="last_name" placeholder="Errak" class="w-full bg-white/5 border border-white/10 rounded-xl py-3 px-4 font-bold text-white focus:bg-white/10 focus:border-primary-500 transition-all outline-none">
+                        <input type="text" name="last_name" value="{{ old('last_name') }}" placeholder="Errak" class="w-full bg-white/5 border @error('last_name') border-red-500 @else border-white/10 @enderror rounded-xl py-3 px-4 font-bold text-white focus:bg-white/10 focus:border-primary-500 transition-all outline-none">
+                        @error('last_name') <p class="text-red-500 text-[10px] pl-1">{{ $message }}</p> @enderror
                     </div>
                 </div>
 
                 <div class="space-y-1">
                     <label class="text-[10px] font-black uppercase tracking-widest text-slate-500 pl-1">Email</label>
-                    <input type="email" name="email" placeholder="contact@example.com" class="w-full bg-white/5 border border-white/10 rounded-xl py-3 px-4 font-bold text-white focus:bg-white/10 focus:border-primary-500 transition-all outline-none">
+                    <input type="email" name="email" value="{{ old('email') }}" placeholder="contact@example.com" class="w-full bg-white/5 border @error('email') border-red-500 @else border-white/10 @enderror rounded-xl py-3 px-4 font-bold text-white focus:bg-white/10 focus:border-primary-500 transition-all outline-none">
+                    @error('email') <p class="text-red-500 text-[10px] pl-1">{{ $message }}</p> @enderror
                 </div>
 
-                <div class="space-y-1">
-                    <label class="text-[10px] font-black uppercase tracking-widest text-slate-500 pl-1">Mot de passe</label>
-                    <input type="password" name="password" placeholder="••••••••" class="w-full bg-white/5 border border-white/10 rounded-xl py-3 px-4 font-bold text-white focus:bg-white/10 focus:border-primary-500 transition-all outline-none">
+                <div class="grid grid-cols-2 gap-4">
+                    <div class="space-y-1">
+                        <label class="text-[10px] font-black uppercase tracking-widest text-slate-500 pl-1">Mot de passe</label>
+                        <input type="password" name="password" placeholder="••••••••" class="w-full bg-white/5 border @error('password') border-red-500 @else border-white/10 @enderror rounded-xl py-3 px-4 font-bold text-white focus:bg-white/10 focus:border-primary-500 transition-all outline-none">
+                    </div>
+                    <div class="space-y-1">
+                        <label class="text-[10px] font-black uppercase tracking-widest text-slate-500 pl-1">Confirmer le mot de passe</label>
+                        <input type="password" name="password_confirmation" placeholder="••••••••" class="w-full bg-white/5 border border-white/10 rounded-xl py-3 px-4 font-bold text-white focus:bg-white/10 focus:border-primary-500 transition-all outline-none">
+                    </div>
+                    @error('password') <p class="text-red-500 text-[10px] pl-1 col-span-2">{{ $message }}</p> @enderror
                 </div>
 
-                <div class="grid grid-cols-2 gap-4 pt-2">
-                    <label class="cursor-pointer group">
-                        <input type="radio" name="role" value="devloppeur" class="peer hidden" checked>
-                        <div class="p-4 rounded-xl border border-white/10 bg-white/5 peer-checked:bg-primary-600 peer-checked:border-primary-600 transition-all text-center">
-                            <span class="block text-white font-black text-sm">devloppeur</span>
-                            <span class="block text-slate-400 text-[10px] peer-checked:text-primary-200">Je cherche un job</span>
-                        </div>
-                    </label>
-                    <label class="cursor-pointer group">
-                        <input type="radio" name="role" value="recruiter" class="peer hidden">
-                        <div class="p-4 rounded-xl border border-white/10 bg-white/5 peer-checked:bg-primary-600 peer-checked:border-primary-600 transition-all text-center">
-                            <span class="block text-white font-black text-sm">recruiter</span>
-                            <span class="block text-slate-400 text-[10px] peer-checked:text-primary-200">Je recrute</span>
-                        </div>
-                    </label>
+                <div class="space-y-1 pt-2">
+                    <div class="grid grid-cols-2 gap-4">
+                        <label class="cursor-pointer group">
+                            <input type="radio" name="role" value="devloppeur" class="peer hidden" {{ old('role', 'devloppeur') == 'devloppeur' ? 'checked' : '' }}>
+                            <div class="p-4 rounded-xl border @error('role') border-red-500 @else border-white/10 @enderror bg-white/5 peer-checked:bg-primary-600 peer-checked:border-primary-600 transition-all text-center">
+                                <span class="block text-white font-black text-sm">devloppeur</span>
+                                <span class="block text-slate-400 text-[10px] peer-checked:text-primary-200">Je cherche un job</span>
+                            </div>
+                        </label>
+                        <label class="cursor-pointer group">
+                            <input type="radio" name="role" value="recruiter" class="peer hidden" {{ old('role') == 'recruiter' ? 'checked' : '' }}>
+                            <div class="p-4 rounded-xl border @error('role') border-red-500 @else border-white/10 @enderror bg-white/5 peer-checked:bg-primary-600 peer-checked:border-primary-600 transition-all text-center">
+                                <span class="block text-white font-black text-sm">recruiter</span>
+                                <span class="block text-slate-400 text-[10px] peer-checked:text-primary-200">Je recrute</span>
+                            </div>
+                        </label>
+                    </div>
+                    @error('role') <p class="text-red-500 text-[10px] pl-1 text-center">{{ $message }}</p> @enderror
                 </div>
 
                 <div class="pt-4">
