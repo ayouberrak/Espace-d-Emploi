@@ -84,9 +84,24 @@
                         </div>
 
                         <!-- Action -->
-                        <a href="{{ route('profile', $user['id']) }}" class="w-full mt-auto bg-slate-50 text-slate-900 font-bold py-3 rounded-xl text-xs uppercase tracking-wider hover:bg-slate-900 hover:text-white transition-all">
-                            Voir le profil
-                        </a>
+                        <div class="w-full flex flex-col gap-3 mt-auto">
+                            <a href="{{ route('profile', $user['id']) }}"
+                               class="w-full bg-slate-50 text-slate-900 font-bold py-3 rounded-xl text-xs uppercase tracking-wider hover:bg-slate-900 hover:text-white transition-all text-center">
+                                Voir le profil
+                            </a>
+
+                        <form action="{{ route('inviStore', $user['id']) }}" method="POST">
+                            @csrf
+                            <button type="submit"
+                                    class="w-full bg-slate-900 text-white font-bold py-3 rounded-xl text-xs uppercase tracking-wider hover:bg-slate-700 transition-all text-center">
+                                Se connecter
+                            </button>
+                        </form>
+
+                            
+                        </div>
+
+
                     </div>
                 @endforeach
             </div>
