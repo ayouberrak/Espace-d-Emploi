@@ -118,7 +118,7 @@
                 <a href="{{ route('dashboard') }}" class="px-4 py-2 rounded-lg text-sm font-bold transition-all {{ request()->routeIs('dashboard') ? 'bg-white text-primary-600 shadow-sm ring-1 ring-slate-900/5' : 'text-slate-500 hover:text-slate-900' }}">Talents</a>
                 <a href="{{ route('offres') }}" class="px-4 py-2 rounded-lg text-sm font-bold transition-all {{ request()->routeIs('offres') ? 'bg-white text-primary-600 shadow-sm ring-1 ring-slate-900/5' : 'text-slate-500 hover:text-slate-900' }}">offres</a>
                 <a href="{{ route('recrutement') }}" class="px-4 py-2 rounded-lg text-sm font-bold transition-all {{ request()->routeIs('recrutement') ? 'bg-white text-primary-600 shadow-sm ring-1 ring-slate-900/5' : 'text-slate-500 hover:text-slate-900' }}">Recruteurs</a>
-                <a href="{{ route('network.index') }}" class="px-4 py-2 rounded-lg text-sm font-bold transition-all {{ request()->routeIs('network.index') ? 'bg-white text-primary-600 shadow-sm ring-1 ring-slate-900/5' : 'text-slate-500 hover:text-slate-900' }}">Réseau</a>
+                <a href="{{ route('networkIndex') }}" class="px-4 py-2 rounded-lg text-sm font-bold transition-all {{ request()->routeIs('networkIndex') ? 'bg-white text-primary-600 shadow-sm ring-1 ring-slate-900/5' : 'text-slate-500 hover:text-slate-900' }}">Réseau</a>
             </div>
 
             <!-- User Context -->
