@@ -1,82 +1,126 @@
 @extends('layouts.app')
 
-@section('title', 'offres - YouConnect')
+@section('title', 'Offres d\'emploi - YouConnect')
 
 @section('content')
-<div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-20">
+<div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
     
-    <!-- Creative Header -->
-    <div class="text-center max-w-3xl mx-auto mb-20 animate-in fade-in slide-in-from-bottom-4 duration-700">
-        <span class="px-4 py-1.5 rounded-full border border-primary-100 bg-primary-50 text-primary-600 text-[10px] font-black uppercase tracking-widest mb-6 inline-block">Opportunités en Or</span>
-        <h1 class="text-5xl md:text-7xl font-black text-slate-900 font-outfit tracking-tighter leading-none mb-6">
-            Trouvez votre <br>
-            <span class="relative inline-block">
-                <span class="absolute inset-x-0 bottom-2 h-4 bg-primary-200/50 -rotate-2 transform scale-110"></span>
-                <span class="relative">Future Mission.</span>
-            </span>
-        </h1>
-        <p class="text-xl text-slate-500 font-medium max-w-xl mx-auto">
-            Des offres pré-embauche et PFE validés par les meilleures entreprises du Maroc.
-        </p>
+    <!-- LinkedIn-style Header -->
+    <div class="bg-white rounded-xl border border-slate-200 p-6 mb-6 shadow-sm flex flex-col md:flex-row justify-between items-center gap-4">
+        <div>
+            <h1 class="text-2xl font-bold text-slate-900">Recherche d'emploi</h1>
+            <p class="text-slate-500 text-sm">Découvrez les meilleures opportunités pour votre carrière.</p>
+        </div>
+        <div class="flex gap-3">
+            <button class="bg-slate-100 text-slate-700 hover:bg-slate-200 px-4 py-2 rounded-full text-sm font-bold transition-colors">
+                Alertes emploi
+            </button>
+            <button class="bg-primary-600 text-white hover:bg-primary-700 px-4 py-2 rounded-full text-sm font-bold transition-colors shadow-sm">
+                Poster une offre
+            </button>
+        </div>
     </div>
 
-    <!-- Job Grid -->
-    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
-        @foreach($offres as $offre)
-        <div class="group bg-white rounded-[2.5rem] p-1 border border-slate-100 hover:border-primary-100 shadow-sm hover:shadow-xl hover:shadow-primary-900/5 transition-all duration-500 flex flex-col h-full">
-            <div class="bg-slate-50/50 rounded-[2rem] p-8 flex flex-col h-full relative overflow-hidden">
-                
-                <div class="absolute -top-20 -right-20 w-40 h-40 bg-gradient-to-br from-primary-100/50 to-transparent rounded-full blur-2xl group-hover:scale-150 transition-transform duration-700"></div>
-
-                <div class="flex justify-between items-start mb-6 relative z-10">
-                    <div class="w-14 h-14 bg-white rounded-2xl flex items-center justify-center shadow-sm border border-slate-100 text-xl font-black text-slate-900 group-hover:scale-110 transition-transform">
-                        {{ substr($offre['entrepris']['name'], 0, 1) }}
+    <div class="grid grid-cols-1 lg:grid-cols-4 gap-6">
+        <!-- Sidebar Filters (Left) -->
+        <div class="lg:col-span-1 space-y-4">
+             <div class="bg-white rounded-xl border border-slate-200 p-5 shadow-sm">
+                <h3 class="font-bold text-slate-900 mb-4">Filtres</h3>
+                <div class="space-y-4">
+                    <div>
+                        <label class="block text-xs font-bold text-slate-500 uppercase mb-2">Date de publication</label>
+                        <div class="space-y-2">
+                            <label class="flex items-center gap-2 cursor-pointer">
+                                <input type="radio" name="date" class="text-primary-600 focus:ring-primary-500" checked>
+                                <span class="text-sm text-slate-600">Tout</span>
+                            </label>
+                            <label class="flex items-center gap-2 cursor-pointer">
+                                <input type="radio" name="date" class="text-primary-600 focus:ring-primary-500">
+                                <span class="text-sm text-slate-600">Dernières 24h</span>
+                            </label>
+                            <label class="flex items-center gap-2 cursor-pointer">
+                                <input type="radio" name="date" class="text-primary-600 focus:ring-primary-500">
+                                <span class="text-sm text-slate-600">Semaine passée</span>
+                            </label>
+                        </div>
                     </div>
-                    <div class="flex flex-col items-end gap-2">
-                        <span class="px-3 py-1 bg-black text-white text-[10px] font-black uppercase tracking-wide rounded-full">
-                            {{ \Carbon\Carbon::parse($offre['offre']['created_at'])->diffForHumans() }}                        </span>
-                        @if($offre['offre']['type'] == 'Remote')
-                            <span class="text-[10px] font-bold text-green-600 bg-green-50 px-2 py-0.5 rounded-md border border-green-100">🌍 Remote</span>
-                        @endif
+                    <div class="pt-4 border-t border-slate-100">
+                        <label class="block text-xs font-bold text-slate-500 uppercase mb-2">Type de contrat</label>
+                        <div class="space-y-2">
+                             <label class="flex items-center gap-2 cursor-pointer">
+                                <input type="checkbox" class="rounded text-primary-600 focus:ring-primary-500">
+                                <span class="text-sm text-slate-600">CDI</span>
+                            </label>
+                            <label class="flex items-center gap-2 cursor-pointer">
+                                <input type="checkbox" class="rounded text-primary-600 focus:ring-primary-500">
+                                <span class="text-sm text-slate-600">Stage</span>
+                            </label>
+                            <label class="flex items-center gap-2 cursor-pointer">
+                                <input type="checkbox" class="rounded text-primary-600 focus:ring-primary-500">
+                                <span class="text-sm text-slate-600">Freelance</span>
+                            </label>
+                        </div>
                     </div>
-                </div>
-
-                <div class="mb-8 relative z-10">
-                    <h3 class="text-xl font-black text-slate-900 leading-tight mb-1 group-hover:text-primary-600 transition-colors">
-                        {{ $offre['offre']['title'] }}
-                    </h3>
-                    <p class="text-sm font-bold text-slate-500 mb-4">{{ $offre['entrepris']['name'] }}</p>
-                    
-                    <p class="text-xs text-slate-400 line-clamp-2 mb-5 font-medium leading-relaxed">
-                        {{ Str::limit($offre['offre']['description'], 80) }}
-                    </p>
-
-                    <div class="flex flex-wrap gap-2 mb-6">
-                        <span class="inline-flex items-center gap-1.5 px-3 py-1.5 bg-white border border-slate-200 rounded-lg text-xs font-bold text-slate-600 shadow-sm">
-                            <svg class="w-3.5 h-3.5 text-slate-400" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z" /><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 11a3 3 0 11-6 0 3 3 0 016 0z" /></svg>
-                            {{ $offre['entrepris']['location'] }}
-                        </span>
-                        <span class="inline-flex items-center gap-1.5 px-3 py-1.5 bg-white border border-slate-200 rounded-lg text-xs font-bold text-slate-600 shadow-sm">
-                            <svg class="w-3.5 h-3.5 text-slate-400" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" /></svg>
-                            {{ $offre['offre']['durre'] }}
-                        </span>
-                        <span class="inline-flex items-center gap-1.5 px-3 py-1.5 bg-primary-50 border border-primary-100 rounded-lg text-xs font-bold text-primary-700 shadow-sm">
-                            {{ $offre['offre']['type'] }}
-                        </span>
-                    </div>
-                </div>
-
-                <div class="mt-auto relative z-10">
-                    <a href="/jobs/{{ $offre['offre']['id'] }}" class="w-full bg-slate-900 text-white font-black py-4 rounded-xl shadow-lg hover:bg-primary-600 hover:shadow-primary-500/30 transition-all flex justify-between px-6 items-center group/btn">
-                        <span>Postuler maintenant</span>
-                        <svg class="w-4 h-4 transform group-hover/btn:translate-x-1 transition-transform" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M14 5l7 7m0 0l-7 7m7-7H3" />
-                        </svg>
-                    </a>
                 </div>
             </div>
         </div>
-        @endforeach
+
+        <!-- Job List (Right) -->
+        <div class="lg:col-span-3">
+            <div class="space-y-4">
+                @foreach($offres as $offre)
+                <div class="bg-white rounded-xl border border-slate-200 p-5 hover:shadow-md transition-shadow group cursor-pointer relative">
+                    <div class="flex items-start gap-4">
+                         <!-- Logo -->
+                        <div class="w-16 h-16 bg-white rounded-lg border border-slate-100 flex items-center justify-center shrink-0 text-2xl font-black text-slate-900 shadow-sm overflow-hidden group-hover:border-primary-200 transition-colors">
+                             @if($offre['entrepris']['logo'])
+                                <img src="{{ Str::startsWith($offre['entrepris']['logo'], 'http') ? $offre['entrepris']['logo'] : asset('storage/' . $offre['entrepris']['logo']) }}" alt="{{ $offre['entrepris']['name'] }}" class="w-full h-full object-cover">
+                            @else
+                                {{ substr($offre['entrepris']['name'], 0, 1) }}
+                            @endif
+                        </div>
+                        
+                        <!-- Content -->
+                        <div class="flex-grow">
+                            <div class="flex justify-between items-start">
+                                <div>
+                                    <h3 class="text-lg font-bold text-primary-600 group-hover:underline mb-1">
+                                        <a href="{{ route('offre.details', $offre['offre']['id']) }}">
+                                            {{ $offre['offre']['title'] }}
+                                        </a>
+                                    </h3>
+                                    <p class="text-sm text-slate-900 font-medium mb-1">{{ $offre['entrepris']['name'] }}</p>
+                                    <p class="text-sm text-slate-500 mb-3">{{ $offre['entrepris']['location'] }} ({{ $offre['offre']['type'] }})</p>
+                                </div>
+                                <button class="text-slate-400 hover:text-slate-900">
+                                    <svg class="w-6 h-6" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 5a2 2 0 012-2h10a2 2 0 012 2v16l-7-3.5L5 21V5z" /></svg>
+                                </button>
+                            </div>
+                            
+                            <div class="flex items-center gap-4 text-xs text-slate-500 font-medium mt-1">
+                                @auth
+                                    @if(in_array(auth()->id(), $offre['offre']['candidats'] ?? []))
+                                         <span class="text-green-600 bg-green-50 px-2 py-1 rounded border border-green-200 font-bold flex items-center gap-1">
+                                            <svg class="w-3 h-3" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7" /></svg>
+                                            Candidature envoyée
+                                         </span>
+                                         <span>•</span>
+                                    @endif
+                                @endauth
+                                <span class="text-green-600 font-bold">{{ \Carbon\Carbon::parse($offre['offre']['created_at'])->diffForHumans() }}</span>
+                                <span>•</span>
+                                <span>{{ $offre['offre']['durre'] }}</span>
+                                @if(isset($offre['applicants_count']))
+                                <span>•</span>
+                                <span class="text-primary-600 font-bold">{{ $offre['applicants_count'] }} candidats</span>
+                                @endif
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                @endforeach
+            </div>
+        </div>
     </div>
 </div>
 @endsection
