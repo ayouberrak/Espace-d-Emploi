@@ -2,10 +2,12 @@
 
 namespace App\Models;
 
+use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
 class Offres extends Model
 {
+    use HasFactory;
     protected $table = 'ofres';
 
     protected $fillable = [
@@ -16,6 +18,9 @@ class Offres extends Model
         'ofres_type',
         'durre',
         'created_at',
+    ];
+    protected $casts = [
+        'candidat' => 'array'
     ];
 
     public $timestamps = false; 
