@@ -7,9 +7,7 @@ use App\Models\Offres;
 use App\Models\User;
 use Illuminate\Database\Eloquent\Factories\Factory;
 
-/**
- * @extends \Illuminate\Database\Eloquent\Factories\Factory<\App\Models\Offres>
- */
+
 class OffresFactory extends Factory
 {
     /**
@@ -26,6 +24,7 @@ class OffresFactory extends Factory
             'description' => fake()->paragraph(),
             'ofres_type' => fake()->randomElement(['Stage', 'CDI', 'CDD']),
             'durre' => fake()->randomElement(['3 mois', '6 mois', '1 an', 'Indéterminé']),
+            'competences' => fake()->randomElements(['PHP', 'Laravel', 'React', 'Vue.js', 'Angular', 'Node.js', 'Python', 'Java', 'Docker', 'AWS', 'Figma', 'UI/UX'], rand(3, 6)),
             'created_at' => now(),
             'candidat' => [], 
         ];
