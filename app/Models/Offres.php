@@ -18,9 +18,11 @@ class Offres extends Model
         'ofres_type',
         'durre',
         'created_at',
+        'competences',
     ];
     protected $casts = [
-        'candidat' => 'array'
+        'candidat' => 'array',
+        'competences' => 'array',
     ];
 
     public $timestamps = false; 
