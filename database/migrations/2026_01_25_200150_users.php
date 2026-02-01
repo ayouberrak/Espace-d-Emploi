@@ -18,6 +18,7 @@ return new class extends Migration
             $table->string('password');
             $table->enum('role',['devloppeur','recruiter']);
             $table->string('photo')->nullable();
+            $table->string('cover_image')->nullable();
             $table->text('bio')->nullable();
             $table->string('phone')->nullable();
             $table->jsonb('amis')->nullable();
