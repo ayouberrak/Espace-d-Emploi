@@ -12,6 +12,8 @@ use App\Http\Controllers\inviController;
 Route::get('/', [UserController::class, 'index'])->name('dashboard');
 
 Route::get('/offres', [offresController::class, 'offres'])->name('offres');
+Route::get('/offres/{id}', [offresController::class, 'offreDetails'])->name('offre.details');
+Route::post('/offres/{id}/postuler', [offresController::class, 'postuler'])->name('offre.postuler');
 Route::get('/recruteurs', [recruteuController::class, 'recrutement'])->name('recrutement');
 
 Route::get('/login', [AuthController::class, 'showLogin'])->name('login');
@@ -36,5 +38,6 @@ Route::get('/chat', [App\Http\Controllers\ChatController::class, 'index'])->name
 
 Route::get('/network', [App\Http\Controllers\inviController::class, 'showInvi'])->name('networkIndex');
 Route::post('/network/accept/{id?}',[inviController::class,'acceptInvi'])->name('acceptInvi');
+Route::delete('/network/decline/{id}', [inviController::class, 'declineInvi'])->name('declineInvi');
 
 
