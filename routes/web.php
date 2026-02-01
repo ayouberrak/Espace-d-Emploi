@@ -22,6 +22,7 @@ Route::post('/register' ,[AuthController::class , 'store'])->name('registerPost'
 Route::post('/logout', [AuthController::class, 'logout'])->name('logout');
 
 Route::get('/profile/{id?}', [ProfileController::class, 'profile'])->name('profile');
+Route::post('/profile/update', [ProfileController::class, 'update'])->name('profile.update');
  
 
 Route::post('/invi/{id?}', [inviController::class, 'store'])->name('inviStore');
@@ -37,15 +38,3 @@ Route::get('/network', [App\Http\Controllers\inviController::class, 'showInvi'])
 Route::post('/network/accept/{id?}',[inviController::class,'acceptInvi'])->name('acceptInvi');
 
 
-// use App\Notifications\NouvelleNotification;
-
-// Route::get('/test-notif', function () {
-//     if (auth()->check()) {
-//         auth()->user()->notify(
-//             new NouvelleNotification("🚀 Real-time خدام مع Blade!")
-//         );
-//         return 'sent';
-//     }
-    
-//     return 'User not authenticated';
-// });
