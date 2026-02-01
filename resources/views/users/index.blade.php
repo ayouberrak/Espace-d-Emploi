@@ -38,70 +38,79 @@
 
             <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
                 @foreach($users as $user)
-                    <div class="group bg-white rounded-[2rem] border border-slate-100 p-6 hover:shadow-[0_8px_30px_rgb(0,0,0,0.04)] hover:border-slate-200 transition-all duration-300 relative flex flex-col items-center text-center">
+                    <div class="group bg-white rounded-[2rem] border border-slate-100 overflow-hidden hover:shadow-[0_8px_30px_rgb(0,0,0,0.04)] hover:border-slate-200 transition-all duration-300 relative flex flex-col">
                         
-                        <!-- Role Badge -->
-                        <div class="absolute top-6 right-6">
-                            <span class="inline-flex items-center px-2.5 py-1 rounded-full text-[10px] font-black uppercase tracking-widest {{ $user['role'] === 'recruiter' ? 'bg-indigo-50 text-indigo-600 border border-indigo-100' : 'bg-primary-50 text-primary-600 border border-primary-100' }}">
-                                {{ $user['role'] === 'recruiter' ? 'Recruteur' : 'Talent' }}
-                            </span>
+                        <!-- Reference Cover Image -->
+                        <div class="h-24 bg-slate-100 relative w-full overflow-hidden">
+                             @if(isset($user['cover']) && $user['cover'])
+                                <img src="{{ Str::startsWith($user['cover'], 'http') ? $user['cover'] : asset('storage/' . $user['cover']) }}" class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-700">
+                             @else
+                                <div class="w-full h-full bg-gradient-to-r from-indigo-50 to-primary-50"></div>
+                             @endif
+                            
+                             <!-- Role Badge -->
+                            <div class="absolute top-4 right-4">
+                                <span class="inline-flex items-center px-2.5 py-1 rounded-full text-[10px] font-black uppercase tracking-widest bg-white/90 backdrop-blur-sm border border-slate-100 shadow-sm {{ $user['role'] === 'recruiter' ? 'text-indigo-600' : 'text-primary-600' }}">
+                                    {{ $user['role'] === 'recruiter' ? 'Recruteur' : 'Talent' }}
+                                </span>
+                            </div>
                         </div>
 
-                        <!-- Avatar -->
-                        <div class="relative w-24 h-24 mb-6 transition-transform duration-500 group-hover:scale-105">
-                            <div class="w-full h-full rounded-[1.8rem] overflow-hidden shadow-lg ring-1 ring-slate-900/5">
-                                @if($user['avatar'])
-                                    <img src="{{ $user['avatar'] }}" alt="{{ $user['name'] }}" class="w-full h-full object-cover">
-                                @else
-                                    <div class="w-full h-full bg-slate-50 flex items-center justify-center font-black text-slate-300 text-2xl uppercase">
-                                        {{ substr($user['name'], 0, 1) }}
-                                    </div>
+                        <div class="px-6 pb-6 flex flex-col items-center text-center relative z-10">
+                            <!-- Avatar -->
+                            <div class="relative w-24 h-24 -mt-12 mb-4 transition-transform duration-500 group-hover:scale-105">
+                                <div class="w-full h-full rounded-[1.8rem] overflow-hidden shadow-lg ring-4 ring-white">
+                                    @if($user['avatar'])
+                                        <img src="{{ Str::startsWith($user['avatar'], 'http') ? $user['avatar'] : asset('storage/' . $user['avatar']) }}" alt="{{ $user['name'] }}" class="w-full h-full object-cover">
+                                    @else
+                                        <div class="w-full h-full bg-slate-50 flex items-center justify-center font-black text-slate-300 text-2xl uppercase">
+                                            {{ substr($user['name'], 0, 1) }}
+                                        </div>
+                                    @endif
+                                </div>
+                                <!-- Pro Badge Indicator -->
+                                <div class="absolute -bottom-1 -right-1 bg-white rounded-full p-0.5 shadow-sm border border-slate-50">
+                                    <div class="bg-green-500 w-3 h-3 rounded-full border-2 border-white"></div>
+                                </div>
+                            </div>
+
+                            <!-- Info -->
+                            <h3 class="text-lg font-black text-slate-900 mb-1 font-outfit">{{ $user['name'] }}</h3>
+                            <p class="text-sm font-bold text-slate-500 mb-4">{{ $user['specialty'] ?? 'Membre Talentia' }}</p>
+                            
+                            <p class="text-xs text-slate-400 font-medium leading-relaxed line-clamp-2 px-2 mb-6">
+                                {{ $user['bio'] }}
+                            </p>
+
+                            <!-- Skills / Tags -->
+                            <div class="flex flex-wrap justify-center gap-1.5 mb-6">
+                                @if(isset($user['skills']) && is_array($user['skills']))
+                                    @foreach(array_slice($user['skills'], 0, 3) as $skill)
+                                        <span class="px-2 py-1 bg-slate-50 border border-slate-100 rounded-lg text-[10px] font-bold text-slate-500 uppercase tracking-wide group-hover:bg-slate-100 transition-all">
+                                            {{ $skill }}
+                                        </span>
+                                    @endforeach
                                 @endif
                             </div>
-                            <!-- Pro Badge Indicator -->
-                            <div class="absolute -bottom-2 -right-2 bg-white rounded-full p-1 shadow-sm border border-slate-50">
-                                <div class="bg-green-500 w-3 h-3 rounded-full"></div>
+
+                            <!-- Action -->
+                            <div class="w-full flex flex-col gap-3 mt-auto">
+                                <a href="{{ route('profile', $user['id']) }}"
+                                   class="w-full bg-slate-50 text-slate-900 font-bold py-3 rounded-xl text-xs uppercase tracking-wider hover:bg-slate-900 hover:text-white transition-all text-center">
+                                    Voir le profil
+                                </a>
+
+                                @auth
+                                <form action="{{ route('inviStore', $user['id']) }}" method="POST">
+                                    @csrf
+                                    <button type="submit"
+                                            class="w-full bg-white border-2 border-slate-100 text-slate-900 font-bold py-3 rounded-xl text-xs uppercase tracking-wider hover:border-slate-900 hover:bg-slate-900 hover:text-white transition-all text-center">
+                                        Se connecter
+                                    </button>
+                                </form>
+                                @endauth
                             </div>
                         </div>
-
-                        <!-- Info -->
-                        <h3 class="text-lg font-black text-slate-900 mb-1 font-outfit">{{ $user['name'] }}</h3>
-                        <p class="text-sm font-bold text-slate-500 mb-4">{{ $user['specialty'] }}</p>
-                        
-                        <p class="text-xs text-slate-400 font-medium leading-relaxed line-clamp-2 px-2 mb-6">
-                            {{ $user['bio'] }}
-                        </p>
-
-                        <!-- Skills / Tags -->
-                        <div class="flex flex-wrap justify-center gap-1.5 mb-6">
-                            @if(isset($user['skills']) && is_array($user['skills']))
-                                @foreach(array_slice($user['skills'], 0, 3) as $skill)
-                                    <span class="px-2 py-1 bg-slate-50 border border-slate-100 rounded-lg text-[10px] font-bold text-slate-500 uppercase tracking-wide group-hover:bg-white group-hover:shadow-sm transition-all">
-                                        {{ $skill }}
-                                    </span>
-                                @endforeach
-                            @endif
-                        </div>
-
-                        <!-- Action -->
-                        <div class="w-full flex flex-col gap-3 mt-auto">
-                            <a href="{{ route('profile', $user['id']) }}"
-                               class="w-full bg-slate-50 text-slate-900 font-bold py-3 rounded-xl text-xs uppercase tracking-wider hover:bg-slate-900 hover:text-white transition-all text-center">
-                                Voir le profil
-                            </a>
-
-                        <form action="{{ route('inviStore', $user['id']) }}" method="POST">
-                            @csrf
-                            <button type="submit"
-                                    class="w-full bg-slate-900 text-white font-bold py-3 rounded-xl text-xs uppercase tracking-wider hover:bg-slate-700 transition-all text-center">
-                                Se connecter
-                            </button>
-                        </form>
-
-                            
-                        </div>
-
-
                     </div>
                 @endforeach
             </div>
