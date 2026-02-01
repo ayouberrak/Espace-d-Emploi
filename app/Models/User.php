@@ -18,6 +18,7 @@ class User extends Authenticatable
         'password',
         'role',
         'photo',
+        'cover_image',
         'bio',
         'phone',
         'amis',
