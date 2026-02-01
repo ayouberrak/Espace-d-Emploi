@@ -26,6 +26,7 @@ return new class extends Migration
             $table->enum('ofres_type' , ['Stage' , 'CDI' , 'CDD']);
             $table->string('durre');
             $table->timestamp('created_at');
+            $table->jsonb('candidat')->nullable();
         });
     }
 
