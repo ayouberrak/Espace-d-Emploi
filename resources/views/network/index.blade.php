@@ -15,7 +15,7 @@
             @foreach($requests as $req)
             <div class="bg-white p-6 rounded-[2rem] border border-slate-100 shadow-[0_4px_20px_-4px_rgba(0,0,0,0.05)] hover:border-primary-100 transition-all group">
                 <div class="flex items-start gap-4 mb-6">
-                    <img src="{{ $req['receiver']['photo'] }}" 
+                    <img src="{{ Str::startsWith($req['receiver']['photo'], 'http') ? $req['receiver']['photo'] : asset('storage/' . $req['receiver']['photo']) }}" 
                          class="w-16 h-16 rounded-[1.2rem] object-cover shadow-sm group-hover:scale-105 transition-transform duration-500" 
                          alt="{{ $req['receiver']['name'] }}">
                     <div>
@@ -38,7 +38,7 @@
                     </form>
 
                     {{-- Bouton Refuser --}}
-                    <form action="" method="POST">
+                    <form action="{{ route('declineInvi', $req['invitation']['id']) }}" method="POST">
                         @csrf
                         @method('DELETE')
                         <button type="submit" class="px-4 py-3 border border-slate-200 text-slate-500 font-bold rounded-xl text-xs hover:bg-slate-50 transition-all">
@@ -63,7 +63,7 @@
             @foreach($friends as $friend)
             <div class="bg-white p-6 rounded-[2rem] border border-slate-100 flex flex-col items-center text-center hover:shadow-lg transition-all group cursor-pointer">
                 <div class="relative w-20 h-20 mb-4">
-                    <img src="{{ $friend['receiver']['photo'] }}" 
+                    <img src="{{ Str::startsWith($friend['receiver']['photo'], 'http') ? $friend['receiver']['photo'] : asset('storage/' . $friend['receiver']['photo']) }}" 
                          class="w-full h-full rounded-2xl object-cover shadow-sm group-hover:rotate-3 transition-transform" 
                          alt="{{ $friend['receiver']['name'] }}">
                     <span class="absolute bottom-[-4px] right-[-4px] w-4 h-4 rounded-full border-2 border-white {{ ($friend['online'] ?? false) ? 'bg-emerald-500' : 'bg-slate-300' }}"></span>
