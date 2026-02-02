@@ -59,4 +59,22 @@ class UserFactory extends Factory
             'role' => 'devloppeur',
         ]);
     }
+
+    /**
+     * Configure the model factory.
+     */
+    public function configure(): static
+    {
+        return $this->afterCreating(function (User $user) {
+            if ($user->role === 'recruiter') {
+                 \App\Models\Entreprise::factory()->create([
+                    'recruiter_id' => $user->id,
+                ]);
+            } elseif ($user->role === 'devloppeur') {
+                 \App\Models\Profil::factory()->create([
+                    'user_id' => $user->id,
+                ]);
+            }
+        });
+    }
 }
