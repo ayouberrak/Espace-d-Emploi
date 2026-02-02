@@ -8,7 +8,7 @@ class RecruiterController extends Controller
 {
     public function dashboard()
     {
-        $stats = [
+                $stats = [
             'active_jobs' => 4,
             'total_applicants' => 84,
             'views_this_week' => 1250,
@@ -38,13 +38,11 @@ class RecruiterController extends Controller
 
     public function createJob()
     {
-        // Mock create view or logic
         return redirect()->route('recruiter.dashboard'); 
     }
 
     public function storeJob(Request $request)
     {
-        // Mock store logic
         return redirect()->route('recruiter.dashboard');
     }
 }
