@@ -11,6 +11,8 @@ use App\Http\Controllers\inviController;
 
 Route::get('/', [UserController::class, 'index'])->name('dashboard');
 
+Route::get('/mesOffres' , [offresController::class,'ofresByRecruteur'])->name('mesoffres');
+
 Route::get('/offres', [offresController::class, 'offres'])->name('offres');
 Route::get('/offres/{id}', [offresController::class, 'offreDetails'])->name('offre.details');
 Route::post('/offres/{id}/postuler', [offresController::class, 'postuler'])->name('offre.postuler');
@@ -33,6 +35,7 @@ Route::post('/invi/{id?}', [inviController::class, 'store'])->name('inviStore');
 Route::get('/recruiter/dashboard', [RecruiterController::class, 'dashboard'])->name('recruiter.dashboard');
 Route::get('/recruiter/jobs/create', [RecruiterController::class, 'createJob'])->name('recruiter.jobs.create');
 Route::post('/recruiter/jobs/store', [RecruiterController::class, 'storeJob'])->name('recruiter.jobs.store');
+Route::get('/recruiter/jobs/{id}', [RecruiterController::class, 'showJob'])->name('recruiter.jobs.show');
 
 Route::get('/chat', [App\Http\Controllers\ChatController::class, 'index'])->name('chat.index');
 
