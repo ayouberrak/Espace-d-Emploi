@@ -16,7 +16,6 @@ return new class extends Migration
             $table->string('name');
             $table->string('email')->unique()->index();
             $table->string('password');
-            $table->enum('role',['devloppeur','recruiter']);
             $table->string('photo')->nullable();
             $table->string('cover_image')->nullable();
             $table->text('bio')->nullable();
