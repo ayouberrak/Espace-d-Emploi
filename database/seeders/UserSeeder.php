@@ -14,13 +14,8 @@ class UserSeeder extends Seeder
     public function run(): void
     {
         try {
-            // Create 1 recruiter
             User::factory()->recruiter()->create();
-            $this->command->info('Recruiter created successfully.');
-
-             // Create 1 developer
             User::factory()->developer()->create();
-            $this->command->info('Developer created successfully.');
 
         } catch (\Exception $e) {
             $this->command->error($e->getMessage());
