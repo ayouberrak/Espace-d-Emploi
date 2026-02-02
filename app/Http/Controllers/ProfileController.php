@@ -13,8 +13,13 @@ class ProfileController extends Controller
         $id = $id ?? Auth::id();
         $user = User::with('profile')->findOrFail($id);
         $isMe = Auth::id() === $user->id;
+        $entreprise = null;
+        
+        if ($user->role === 'recruiter') {
+            $entreprise = \App\Models\Entreprise::where('recruiter_id', $user->id)->first();
+        }
 
-        return view('users.profile',['user'=>$user , 'isMe' => $isMe]);
+        return view('users.profile',['user'=>$user , 'isMe' => $isMe, 'entreprise' => $entreprise]);
     }
     public function update(Request $request)
     {
@@ -59,6 +64,25 @@ class ProfileController extends Controller
                         }
                     }
                     $profile->projects = array_values($projectsInput);
+                    break;
+                case 'entreprise':
+                    $entreprise = \App\Models\Entreprise::where('recruiter_id', $user->id)->first();
+                    if (!$entreprise) {
+                        $entreprise = new \App\Models\Entreprise();
+                        $entreprise->recruiter_id = $user->id;
+                        $entreprise->create = now();
+                    }
+                    
+                    if ($request->has('entreprise_nom')) $entreprise->nom = $request->input('entreprise_nom');
+                    if ($request->has('entreprise_description')) $entreprise->description = $request->input('entreprise_description');
+                    if ($request->has('entreprise_location')) $entreprise->location = $request->input('entreprise_location');
+                    
+                    if ($request->hasFile('entreprise_logo')) {
+                        $path = $request->file('entreprise_logo')->store('entreprises', 'public');
+                        $entreprise->logo = $path;
+                    }
+                    
+                    $entreprise->save();
                     break;
             }
         } else {
