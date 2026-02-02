@@ -62,4 +62,20 @@ class offresController extends Controller
 
         return back()->with('success', 'Votre candidature a été envoyée avec succès !');
     }
+
+    public function ofresByRecruteur()
+    {
+        if (!auth()->check() || auth()->user()->role !== 'recruiter') {
+            return redirect()->route('login');
+        }
+
+        $user = auth()->user();
+        // Assuming Recruteur model logic applies to User instance or we re-query as Recruteur
+        $recruiter = \App\Models\Recruteur::find($user->id); 
+        
+        $entreprise = $recruiter->entreprises()->first(); 
+        $offres = $recruiter->offres()->get();
+
+        return view('pages.recruiter_offres', compact('recruiter', 'entreprise', 'offres'));
+    }
 }
