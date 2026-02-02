@@ -20,6 +20,7 @@ return new class extends Migration
             $table->string('cover_image')->nullable();
             $table->text('bio')->nullable();
             $table->string('phone')->nullable();
+            $table->string('role')->default('devloppeur');
             $table->jsonb('amis')->nullable();
             $table->timestamps();
             
