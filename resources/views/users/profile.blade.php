@@ -146,6 +146,36 @@
                 </div>
             </div>
             
+            <!-- Entreprise Box (Only for Recruiter) -->
+            @if(isset($entreprise) || ($user->role === 'recruiter' && $isMe))
+            <div class="bg-white rounded-[2.5rem] p-8 border border-slate-200 shadow-sm flex flex-col justify-between group min-h-[200px]">
+                <div class="flex items-center justify-between mb-4">
+                     <h3 class="font-black font-outfit text-slate-400 text-[10px] uppercase tracking-widest">Entreprise</h3>
+                     @if($isMe)
+                     <button @click="openModal('entreprise')" class="p-2 bg-slate-100 hover:bg-slate-200 rounded-lg transition-colors text-xs font-bold text-slate-600">
+                        Modifier
+                     </button>
+                     @endif
+                </div>
+                
+                <div class="flex flex-col items-center text-center">
+                    <div class="w-16 h-16 rounded-xl bg-slate-50 mb-3 overflow-hidden border border-slate-100 relative">
+                         <template x-if="entreprise.logo">
+                            <img :src="getProjectImageUrl(entreprise.logo)" class="w-full h-full object-cover">
+                         </template>
+                         <template x-if="!entreprise.logo">
+                            <div class="w-full h-full flex items-center justify-center text-slate-300">
+                                <svg class="w-8 h-8" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2-2v16m8-2a2 2 0 01-2-2 2 2 0 012-2h.01M9 17h.01M9 13h.01M15 21v-5a2 2 0 00-2-2h-2a2 2 0 00-2 2v5h6z" /></svg>
+                            </div>
+                         </template>
+                    </div>
+                    <h4 class="font-bold text-slate-900 text-lg" x-text="entreprise.nom || 'Nom de l\'entreprise'"></h4>
+                    <p class="text-xs text-slate-500 font-medium mb-2" x-text="entreprise.location || 'Localisation'"></p>
+                    <p class="text-sm text-slate-600 line-clamp-3" x-text="entreprise.description || 'Description de l\'entreprise...'"></p>
+                </div>
+            </div>
+            @endif
+            
         </div>
 
         <!-- Projets Réalisés -->
@@ -398,6 +428,48 @@
                     </form>
                 </div>
 
+                <!-- Entreprise Form -->
+                <div x-show="activeTab === 'entreprise'">
+                    <form action="{{ route('profile.update') }}" method="POST" enctype="multipart/form-data" class="space-y-6">
+                        @csrf
+                        <input type="hidden" name="section" value="entreprise">
+                        
+                        <div class="flex items-center gap-6">
+                             <div class="w-24 h-24 rounded-xl bg-slate-50 border border-slate-100 overflow-hidden relative flex-shrink-0">
+                                <template x-if="entreprise.logo">
+                                    <img :src="getProjectImageUrl(entreprise.logo)" class="w-full h-full object-cover">
+                                </template>
+                                <template x-if="!entreprise.logo">
+                                    <div class="w-full h-full flex items-center justify-center text-slate-300">
+                                        <svg class="w-8 h-8" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2-2v16m8-2a2 2 0 01-2-2 2 2 0 012-2h.01M9 17h.01M9 13h.01M15 21v-5a2 2 0 00-2-2h-2a2 2 0 00-2 2v5h6z" /></svg>
+                                    </div>
+                                </template>
+                             </div>
+                             <div class="flex-grow">
+                                <label class="block text-sm font-bold text-slate-700 mb-2">Logo de l'entreprise</label>
+                                <input type="file" name="entreprise_logo" class="w-full text-sm text-slate-500 file:mr-4 file:py-2 file:px-4 file:rounded-full file:border-0 file:text-sm file:font-semibold file:bg-indigo-50 file:text-indigo-700 hover:file:bg-indigo-100">
+                             </div>
+                        </div>
+
+                        <div>
+                            <label class="block text-sm font-bold text-slate-700 mb-2">Nom de l'entreprise</label>
+                            <input type="text" name="entreprise_nom" x-model="entreprise.nom" class="w-full px-4 py-3 rounded-xl bg-slate-50 border-none focus:ring-2 focus:ring-indigo-500 transition-all font-medium" placeholder="TechSolutions SARL">
+                        </div>
+
+                        <div>
+                            <label class="block text-sm font-bold text-slate-700 mb-2">Localisation</label>
+                            <input type="text" name="entreprise_location" x-model="entreprise.location" class="w-full px-4 py-3 rounded-xl bg-slate-50 border-none focus:ring-2 focus:ring-indigo-500 transition-all font-medium" placeholder="Casablanca, Maroc">
+                        </div>
+
+                        <div>
+                            <label class="block text-sm font-bold text-slate-700 mb-2">Description</label>
+                            <textarea name="entreprise_description" x-model="entreprise.description" rows="4" class="w-full px-4 py-3 rounded-xl bg-slate-50 border-none focus:ring-2 focus:ring-indigo-500 transition-all font-medium" placeholder="Ce que fait votre entreprise..."></textarea>
+                        </div>
+
+                        <button type="submit" class="w-full py-4 bg-slate-900 text-white rounded-xl font-bold shadow-lg hover:shadow-xl hover:-translate-y-1 transition-all">Enregistrer l'entreprise</button>
+                    </form>
+                </div>
+
             </div>
         </div>
     </div>
@@ -410,6 +482,14 @@
 
 <script>
 function profileManager() {
+    @php
+        $defaultEntreprise = [
+            'nom' => '',
+            'description' => '',
+            'location' => '',
+            'logo' => ''
+        ];
+    @endphp
     return {
 
         title: @json($user->profile->title ?? ''),
@@ -418,6 +498,7 @@ function profileManager() {
         skills: @json($user->profile->skills ?? []),
         experiances: @json($user->profile->experiances ?? []),
         projects: @json($user->profile->projects ?? []),
+        entreprise: @json($entreprise ?? $defaultEntreprise),
         
         modalOpen: false,     
         activeTab: 'general',
@@ -426,7 +507,6 @@ function profileManager() {
         editingExperience: null, 
         editingProject: null, 
         
-        // ... (truncated for brevity, keeping only changed logic)
 
         getProjectImageUrl(image) {
             if (!image) return null;
@@ -449,7 +529,8 @@ function profileManager() {
                 'general': 'Modifier le profil',
                 'skills': 'Gérer les compétences',
                 'experiances': 'Expériences professionnelles',
-                'projects': 'Mes projets'
+                'projects': 'Mes projets',
+                'entreprise': 'Mon Entreprise'
             };
             return titles[this.activeTab] || 'Modifier';
         },
