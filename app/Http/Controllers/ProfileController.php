@@ -4,6 +4,8 @@ namespace App\Http\Controllers;
 use Illuminate\Http\Request;
 use App\Models\User;
 use Illuminate\Support\Facades\Auth;
+use App\Models\Entreprise;
+use App\Models\Profil;
 
 class ProfileController extends Controller
 {
@@ -16,7 +18,7 @@ class ProfileController extends Controller
         $entreprise = null;
         
         if ($user->role === 'recruiter') {
-            $entreprise = \App\Models\Entreprise::where('recruiter_id', $user->id)->first();
+            $entreprise = Entreprise::where('recruiter_id', $user->id)->first();
         }
 
         return view('users.profile',['user'=>$user , 'isMe' => $isMe, 'entreprise' => $entreprise]);
@@ -24,7 +26,7 @@ class ProfileController extends Controller
     public function update(Request $request)
     {
         $user = Auth::user();
-        $profile = $user->profile ?? new \App\Models\Profil(['user_id' => $user->id]);
+        $profile = $user->profile ?? new Profil(['user_id' => $user->id]);
 
         if ($request->has('section')) {
             switch ($request->section) {
@@ -66,9 +68,9 @@ class ProfileController extends Controller
                     $profile->projects = array_values($projectsInput);
                     break;
                 case 'entreprise':
-                    $entreprise = \App\Models\Entreprise::where('recruiter_id', $user->id)->first();
+                    $entreprise = Entreprise::where('recruiter_id', $user->id)->first();
                     if (!$entreprise) {
-                        $entreprise = new \App\Models\Entreprise();
+                        $entreprise = new Entreprise();
                         $entreprise->recruiter_id = $user->id;
                         $entreprise->create = now();
                     }
