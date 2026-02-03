@@ -390,7 +390,7 @@
                                         <div class="sm:col-span-1">
                                             <div class="aspect-video rounded-xl overflow-hidden bg-slate-100 relative mb-3 border border-slate-100">
                                                 <template x-if="proj.image">
-                                                    <img :src="getProjectImageUrl(proj.image)" class="w-full h-full object-cover">
+                                                    <img :src="getProject   ImageUrl(proj.image)" class="w-full h-full object-cover">
                                                 </template>
                                                 <template x-if="!proj.image">
                                                     <div class="w-full h-full flex items-center justify-center bg-slate-50 text-slate-300">
@@ -513,13 +513,9 @@ function profileManager() {
             if (image.startsWith('http') || image.startsWith('data:')) {
                 return image;
             }
-            // Ensure no double slashes
             const cleanImage = image.replace(/^\/+/, '');
             return window.storageUrl + '/' + cleanImage;
-        },
-
-        // ... existing methods ...
- 
+        }, 
 
         tempExperience: { role: '', company: '', duration: '', description: '' },
         tempProject: { title: '', category: '', image: '' },
