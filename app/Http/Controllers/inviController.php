@@ -8,30 +8,51 @@ use App\Models\User;
 
 class inviController extends Controller
 {    
-    
-    public function store($id){
+    public function store($id)
+    {
         Invitation::create([
-            'sender_id'=>session('user_id'),
-            'resever_id'=>$id,
-            'status'=>'pending',
-            'created_at'=>NOW()
+            'sender_id' => session('user_id'), 
+            'resever_id' => $id,               
+            'status' => 'pending',             
+            'created_at' => now()             
         ]);
 
         return redirect()->route('networkIndex');
     }
 
-    public function showInvi(){
-        $requests = Invitation::where('resever_id','=',session('user_id'))
-                                ->where('status' , '=','pending')
+    public function showInvi()
+    {
+        // 🔹 Invitations en attente (requests)
+        $requests = Invitation::where('resever_id', session('user_id'))
+                                ->where('status', 'pending')
                                 ->get()
-                                ->map(function($inv){
-            return[
+                                ->map(function($inv) {
+            return [
                 'invitation' => [
                     'id' => $inv->id,
                     'status' => $inv->status,
                     'created_at' => $inv->created_at,
                 ],
+                'receiver' => [
+                    'id' => $inv->receiver->id,  
+                    'name' => $inv->receiver->name,
+                    'photo' => $inv->receiver->photo,
+                    'title' => $inv->receiver->profile->title ?? null, 
+                ]
+            ];
+        });
 
+        $friends = Invitation::where('resever_id', session('user_id'))
+                                ->orWhere('sender_id', session('user_id'))
+                                ->where('status', 'accepted')
+                                ->get()
+                                ->map(function($inv) {
+            return [
+                'invitation' => [
+                    'id' => $inv->id,
+                    'status' => $inv->status,
+                    'created_at' => $inv->created_at,
+                ],
                 'receiver' => [
                     'id' => $inv->receiver->id,
                     'name' => $inv->receiver->name,
@@ -40,37 +61,18 @@ class inviController extends Controller
                 ]
             ];
         });
-        $friends = Invitation::where('resever_id','=',session('user_id'))
-                                ->orWhere('sender_id','=',session('user_id'))
-                                ->where('status' , '=','accepted')
-                                ->get()
-                                ->map(function($inv){
-            return[
-                'invitation' => [
-                    'id' => $inv->id,
-                    'status' => $inv->status,
-                    'created_at' => $inv->created_at,
-                ],
 
-                'receiver' => [
-                    'id' => $inv->receiver->id,
-                    'name' => $inv->receiver->name,
-                    'photo' => $inv->receiver->photo,
-                    'title' => $inv->receiver->profile->title ?? null,
-                ]
-            ];
-        });
-
-        return view('network.index',["requests"=>$requests , 'friends'=>$friends]);
+        return view('network.index', ["requests" => $requests, 'friends' => $friends]);
     }
 
-
-    public function acceptInvi($id){
+    public function acceptInvi($id)
+    {
         $invi = Invitation::find($id);
         $invi->status = 'accepted';
         $invi->save();
 
         $user = User::find(session('user_id'));
+
         $amis = $user->amis ?? [];
 
         $friendId = $invi->sender_id == $user->id
@@ -83,7 +85,7 @@ class inviController extends Controller
             $user->save();
         }
 
-       $otherUser = User::find($friendId);
+        $otherUser = User::find($friendId);
         if ($otherUser) {
             $otherAmis = $otherUser->amis ?? [];
             if (!in_array($user->id, $otherAmis)) {
@@ -92,11 +94,12 @@ class inviController extends Controller
                 $otherUser->save();
             }
         }
-        
+
         return redirect()->route('networkIndex');
     }   
 
-    public function declineInvi($id){
+    public function declineInvi($id)
+    {
         $invi = Invitation::find($id);
         $invi->status = 'declined';
         $invi->save();
