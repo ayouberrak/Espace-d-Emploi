@@ -19,6 +19,7 @@ class Offres extends Model
         'durre',
         'created_at',
         'competences',
+        'status',
     ];
     protected $casts = [
         'candidat' => 'array',
