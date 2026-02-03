@@ -35,6 +35,7 @@ Route::post('/invi/{id?}', [inviController::class, 'store'])->name('inviStore');
 Route::get('/recruiter/dashboard', [RecruiterController::class, 'dashboard'])->name('recruiter.dashboard');
 Route::get('/recruiter/jobs/create', [RecruiterController::class, 'createJob'])->name('recruiter.jobs.create');
 Route::post('/recruiter/jobs/store', [RecruiterController::class, 'storeJob'])->name('recruiter.jobs.store');
+Route::post('/recruiter/jobs/{id}/toggle', [RecruiterController::class, 'toggleJobStatus'])->name('recruiter.jobs.toggle');
 Route::get('/recruiter/jobs/{id}', [RecruiterController::class, 'showJob'])->name('recruiter.jobs.show');
 
 Route::get('/chat', [App\Http\Controllers\ChatController::class, 'index'])->name('chat.index');
