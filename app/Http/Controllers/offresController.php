@@ -4,6 +4,10 @@ namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
 use App\Models\Offres;
+use App\Models\User;
+use App\Models\Recruteur;
+
+use App\Notifications\NouvelleNotification;
 
 class offresController extends Controller
 {
@@ -58,6 +62,12 @@ class offresController extends Controller
             $candidats[] = $userId;
             $offre->candidat = $candidats;
             $offre->save();
+
+            $recruiter = User::find($offre->recruiter_id);
+            if ($recruiter) {
+                $candidateName = auth()->user()->name;
+                $recruiter->notify(new NouvelleNotification("$candidateName a postulé à votre offre : " . $offre->title));
+            }
         }
 
         return back()->with('success', 'Votre candidature a été envoyée avec succès !');
@@ -70,8 +80,7 @@ class offresController extends Controller
         }
 
         $user = auth()->user();
-        // Assuming Recruteur model logic applies to User instance or we re-query as Recruteur
-        $recruiter = \App\Models\Recruteur::find($user->id); 
+        $recruiter = Recruteur::find($user->id); 
         
         $entreprise = $recruiter->entreprises()->first(); 
         $offres = $recruiter->offres()->get();
