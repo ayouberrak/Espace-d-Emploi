@@ -37,14 +37,27 @@
                             @auth
                                 @php
                                     $hasApplied = in_array(auth()->id(), $offre->candidat ?? []);
+                                    $isRecruiter = auth()->user()->role === 'recruiter';
+                                    $isOwner = $isRecruiter && ($offre->recruiter_id === auth()->id());
+                                    $isClosed = $offre->status === 'Closed';
                                 @endphp
 
-                                @if($hasApplied)
+                                @if($isOwner)
+                                    <div class="px-6 py-2.5 rounded-full bg-indigo-50 text-indigo-700 font-bold border border-indigo-100 flex items-center gap-2">
+                                        <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" /><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z" /></svg>
+                                        <span>C'est votre offre</span>
+                                    </div>
+                                @elseif($isClosed)
+                                    <div class="px-6 py-2.5 rounded-full bg-rose-50 text-rose-700 font-bold border border-rose-100 flex items-center gap-2 cursor-not-allowed">
+                                        <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z" /></svg>
+                                        <span>Offre Clôturée</span>
+                                    </div>
+                                @elseif($hasApplied)
                                     <button disabled class="bg-green-100 text-green-700 cursor-not-allowed px-6 py-2.5 rounded-full font-bold transition-all shadow-none flex items-center gap-2">
                                         <span>Candidature envoyée</span>
                                         <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7" /></svg>
                                     </button>
-                                @else
+                                @elseif(!$isRecruiter)
                                     <form action="{{ route('offre.postuler', $offre->id) }}" method="POST">
                                         @csrf
                                         <button type="submit" class="bg-primary-600 hover:bg-primary-700 text-white px-6 py-2.5 rounded-full font-bold transition-all shadow-lg shadow-primary-200 flex items-center gap-2">
@@ -54,9 +67,16 @@
                                     </form>
                                 @endif
                             @else
-                                <a href="{{ route('login') }}" class="bg-slate-900 text-white px-6 py-2.5 rounded-full font-bold transition-all shadow-lg hover:bg-slate-800 flex items-center gap-2">
-                                    <span>Se connecter pour postuler</span>
-                                </a>
+                                @if($offre->status === 'Closed')
+                                    <div class="px-6 py-2.5 rounded-full bg-rose-50 text-rose-700 font-bold border border-rose-100 flex items-center gap-2 cursor-not-allowed">
+                                        <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z" /></svg>
+                                        <span>Offre Clôturée</span>
+                                    </div>
+                                @else
+                                    <a href="{{ route('login') }}" class="bg-slate-900 text-white px-6 py-2.5 rounded-full font-bold transition-all shadow-lg hover:bg-slate-800 flex items-center gap-2">
+                                        <span>Se connecter pour postuler</span>
+                                    </a>
+                                @endif
                             @endauth
                             <button class="bg-white hover:bg-slate-50 text-slate-700 border border-slate-300 px-6 py-2.5 rounded-full font-bold transition-all">
                                 Sauvegarder
