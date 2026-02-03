@@ -9,6 +9,7 @@
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=Outfit:wght@400;600;700;800&display=swap" rel="stylesheet">
     <script defer src="https://cdn.jsdelivr.net/npm/alpinejs@3.13.3/dist/cdn.min.js"></script>
+    @vite(['resources/css/app.css', 'resources/js/app.js'])
     <script>
         tailwind.config = {
             theme: {
@@ -54,6 +55,9 @@
                 }
             }
         }
+    </script>
+    <script>
+        window.userId = {{ auth()->id() ?? 'null' }};
     </script>
     <style>
         .mesh-bg {
@@ -158,14 +162,56 @@
                         </svg>
                     </button>
 
-                    <!-- Notifications -->
-                    <div class="relative group">
-                        <button class="relative p-2.5 text-slate-400 hover:text-indigo-600 hover:bg-indigo-50 rounded-full transition-all">
+                    <!-- Notifications Dropdown -->
+                    <div class="relative" x-data="{ open: false }">
+                        <button @click="open = !open" @click.outside="open = false" class="relative p-2.5 text-slate-400 hover:text-indigo-600 hover:bg-indigo-50 rounded-full transition-all">
                             <svg class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 17h5l-1.405-1.405A2.032 2.032 0 0118 14.158V11a6.002 6.002 0 00-4-5.659V5a2 2 0 10-4 0v.341C7.67 6.165 6 8.388 6 11v3.159c0 .538-.214 1.055-.595 1.436L4 17h5m6 0v1a3 3 0 11-6 0v-1m6 0H9" />
                             </svg>
-                            <span class="absolute top-2 right-2 w-2 h-2 bg-red-500 rounded-full border-2 border-white"></span>
+                            @if(isset($unreadCount) && $unreadCount > 0)
+                                <span id="notification-badge" class="absolute top-2 right-2 w-2 h-2 bg-red-500 rounded-full border-2 border-white animate-pulse"></span>
+                            @endif
                         </button>
+
+                        <div x-show="open" 
+                             x-transition:enter="transition ease-out duration-200"
+                             x-transition:enter-start="opacity-0 translate-y-2"
+                             x-transition:enter-end="opacity-100 translate-y-0"
+                             x-transition:leave="transition ease-in duration-150"
+                             x-transition:leave-start="opacity-100 translate-y-0"
+                             x-transition:leave-end="opacity-0 translate-y-2"
+                             class="absolute right-0 top-full mt-4 w-80 bg-white/90 backdrop-blur-xl rounded-2xl shadow-[0_10px_40px_-10px_rgba(0,0,0,0.1)] border border-white/50 ring-1 ring-black/5 z-50 overflow-hidden"
+                             style="display: none;">
+                            
+                            <div class="p-4 border-b border-slate-100/50 flex justify-between items-center">
+                                <h3 class="font-bold text-slate-900">Notifications</h3>
+                                @if(isset($unreadCount) && $unreadCount > 0)
+                                    <span class="bg-indigo-100 text-indigo-600 text-[10px] font-bold px-2 py-0.5 rounded-full">{{ $unreadCount }} nouvelles</span>
+                                @endif
+                            </div>
+
+                            <div class="max-h-[300px] overflow-y-auto custom-scrollbar" id="notification-list">
+                                @if(isset($notifications) && $notifications->count() > 0)
+                                    @foreach($notifications as $notification)
+                                        <div class="p-4 border-b border-slate-50 hover:bg-slate-50 transition-colors cursor-pointer relative group">
+                                            <p class="text-sm text-slate-600 leading-snug">{{ $notification->data['message'] ?? 'Nouvelle notification' }}</p>
+                                            <p class="text-[10px] text-slate-400 font-bold mt-1">{{ $notification->created_at->diffForHumans() }}</p>
+                                            @if(is_null($notification->read_at))
+                                                <span class="absolute top-4 right-4 w-1.5 h-1.5 bg-indigo-500 rounded-full"></span>
+                                            @endif
+                                        </div>
+                                    @endforeach
+                                @else
+                                    <div class="p-8 text-center text-slate-400 text-sm">
+                                        Aucune notification
+                                    </div>
+                                @endif
+                            </div>
+                            
+                            <div class="p-2 border-t border-slate-100/50 text-center">
+                                <a href="#" class="text-xs font-bold text-indigo-600 hover:text-indigo-700">Tout marquer comme lu</a>
+                            </div>
+                        </div>
                     </div>
 
                     <!-- Profile Menu -->
@@ -244,7 +290,7 @@
     </footer>
 
     <!-- Toast Container -->
-    <div id="toast-container" class="fixed bottom-6 right-6 z-[200] flex flex-col gap-4 pointer-events-none"></div>
+    <div id="toast-container" class="fixed top-24 right-6 z-[200] flex flex-col gap-4 pointer-events-none"></div>
 
     <!-- Global Scripts -->
     <script>
@@ -257,7 +303,7 @@
             let icon = '<svg class="w-5 h-5 text-emerald-500" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7" /></svg>';
             if(type === 'info') icon = '<svg class="w-5 h-5 text-blue-500" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" /></svg>';
             
-            toast.className = `pointer-events-auto flex items-center gap-3 bg-white border border-slate-100 shadow-[0_8px_30px_rgb(0,0,0,0.08)] px-5 py-4 rounded-2xl transform transition-all duration-500 translate-y-20 opacity-0`;
+            toast.className = `pointer-events-auto flex items-center gap-3 bg-white border border-slate-100 shadow-[0_8px_30px_rgb(0,0,0,0.08)] px-5 py-4 rounded-2xl transform transition-all duration-500 translate-x-full opacity-0`;
             toast.innerHTML = `
                 <div class="w-8 h-8 rounded-full bg-slate-50 flex items-center justify-center shrink-0">
                     ${icon}
@@ -269,12 +315,12 @@
             
             // Animate In
             requestAnimationFrame(() => {
-                toast.classList.remove('translate-y-20', 'opacity-0');
+                toast.classList.remove('translate-x-full', 'opacity-0');
             });
             
             // Remove after 3s
             setTimeout(() => {
-                toast.classList.add('translate-y-10', 'opacity-0');
+                toast.classList.add('translate-x-full', 'opacity-0');
                 setTimeout(() => toast.remove(), 500);
             }, 4000);
         }
