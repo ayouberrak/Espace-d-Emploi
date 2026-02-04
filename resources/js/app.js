@@ -29,7 +29,6 @@ if (window.userId) {
                 }
             }
 
-            // Add to List
             const list = document.getElementById('notification-list');
             if (list) {
                 const emptyMsg = list.querySelector('.text-center');
