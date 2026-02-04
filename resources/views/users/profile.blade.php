@@ -24,7 +24,6 @@
             </div>
 
             <div class="relative z-10 flex flex-col items-start pt-32 px-8 pb-8">
-                <!-- Profile Picture -->
                 <div class="w-40 h-40 rounded-full p-1.5 bg-white shadow-xl mb-4 relative group/avatar">
                     <div class="w-full h-full rounded-full overflow-hidden bg-slate-50 relative">
                         @if($user->photo)
