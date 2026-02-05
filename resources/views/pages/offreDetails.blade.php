@@ -144,6 +144,9 @@
                                             @endif
                                         </div>
                                     </div>
+                                    <a href="{{ route('user.cv', $app->user->id) }}" class="ml-auto text-indigo-600 hover:text-indigo-900 p-2 bg-indigo-50 hover:bg-indigo-100 rounded-lg transition-colors" title="Télécharger le CV">
+                                        <svg class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 10v6m0 0l-3-3m3 3l3-3m2 8H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" /></svg>
+                                    </a>
                                 </div>
 
                                 @if($app->ai_analysis)
@@ -197,6 +200,9 @@
                                 <h3 class="font-bold text-slate-900 text-lg">{{ $lUser->name }}</h3>
                                 <p class="text-sm text-slate-500">Candidature standard</p>
                             </div>
+                             <a href="{{ route('user.cv', $lUser->id) }}" class="ml-auto text-indigo-600 hover:text-indigo-900 p-2 bg-indigo-50 hover:bg-indigo-100 rounded-lg transition-colors" title="Télécharger le CV">
+                                <svg class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 10v6m0 0l-3-3m3 3l3-3m2 8H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" /></svg>
+                            </a>
                          </div>
                     @endforeach
                 </div>
