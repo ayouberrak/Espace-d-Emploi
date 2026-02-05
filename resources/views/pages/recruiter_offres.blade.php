@@ -103,7 +103,7 @@
                         <div class="text-right">
                              <span class="text-xs font-medium text-slate-400">Publié le {{ \Carbon\Carbon::parse($offre->created_at)->format('d M Y') }}</span>
                              <div class="mt-2 text-xs font-bold text-indigo-600 bg-indigo-50 px-2 py-1 rounded-full inline-block">
-                                 {{ count($offre->candidat ?? []) }} Candidatures
+                                 {{ $offre->applicants_count }} Candidatures
                              </div>
                         </div>
                     </div>
