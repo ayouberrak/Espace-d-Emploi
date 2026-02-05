@@ -6,6 +6,8 @@ use Illuminate\Http\Request;
 use App\Models\Offres;
 use App\Models\User;
 use App\Models\Recruteur;
+use App\Mcp\Tools\CheckProfile;
+use App\Models\Application;
 
 use App\Notifications\NouvelleNotification;
 
@@ -13,7 +15,12 @@ class offresController extends Controller
 {
     public function offres()
     {
-        $offres = Offres::all()->map(function($offre) {
+        $offres = Offres::with('applications')->get()->map(function($offre) {
+            $jsonCandidats = $offre->candidat ?? [];
+            $appCandidats = $offre->applications->pluck('user_id')->toArray();
+            
+            $uniqueCandidats = array_unique(array_merge($jsonCandidats, $appCandidats));
+
             return [
                 'offre' => [
                     'id' => $offre->id,
@@ -23,9 +30,9 @@ class offresController extends Controller
                     'durre' => $offre->durre,
                     'created_at' => $offre->created_at,
                     'competences' => $offre->competences,
-                    'candidats' => $offre->candidat,
+                    'candidats' => $uniqueCandidats,
                 ],
-
+                'applicants_count' => count($uniqueCandidats),
                 'entrepris' => [
                     'id' => $offre->entreprise->id ,
                     'name' => $offre->entreprise->name ,
@@ -40,11 +47,25 @@ class offresController extends Controller
 
     public function offreDetails($id)
     {
-        $offre = Offres::with('entreprise')->findOrFail($id);
+        $offre = Offres::with(['entreprise', 'applications' => function($query) {
+            $query->orderBy('score', 'desc');
+        }, 'applications.user'])->findOrFail($id);
+
+        // Logic for legacy candidates (those in JSON but not in Application table)
+        $applicationUserIds = $offre->applications->pluck('user_id')->toArray();
+        $legacyIds = $offre->candidat ?? [];
+        $missingIds = array_diff($legacyIds, $applicationUserIds);
+
+        $legacyCandidates = [];
+        if (!empty($missingIds)) {
+            $legacyCandidates = User::whereIn('id', $missingIds)->with('profile')->get(); 
+        }
 
         return view('pages.offreDetails', [
             'offre' => $offre,
             'entreprise' => $offre->entreprise,
+            'applications' => $offre->applications,
+            'legacyCandidates' => $legacyCandidates
         ]);
     }
 
@@ -53,24 +74,62 @@ class offresController extends Controller
         if (!auth()->check()) {
             return redirect()->route('login');
         }
-
+        $user = User::with('profile')->find(auth()->id());
+        if(!$user){
+            return back()->with('error', 'Profil utilisateur non trouvé');
+        }
+        
         $offre = Offres::findOrFail($id);
-        $userId = auth()->id();
-        $candidats = $offre->candidat ?? [];
+        
+        if (Application::where('user_id', $user->id)->where('ofre_id', $id)->exists()) {
+             return back()->with('error', 'Vous avez déjà postulé à cette offre.');
+        }
 
-        if (!in_array($userId, $candidats)) {
-            $candidats[] = $userId;
-            $offre->candidat = $candidats;
-            $offre->save();
+        // Vérification IA via CheckProfile Tool
+        $check = CheckProfile::verify($user, $offre);
+        
+        \Log::info('Postuler Analysis', ['user' => $user->id, 'offer' => $offre->id, 'check' => $check]);
 
-            $recruiter = User::find($offre->recruiter_id);
-            if ($recruiter) {
-                $candidateName = auth()->user()->name;
-                $recruiter->notify(new NouvelleNotification("$candidateName a postulé à votre offre : " . $offre->title));
+        $score = 0;
+        $analysisData = [];
+
+        if (isset($check['status']) && $check['status'] === 'success') {
+            $analysis = $check['analysis'];
+            $analysisData = $analysis;
+            $score = $analysis['score'] ?? 0;
+
+            if (isset($analysis['eligible']) && !$analysis['eligible']) {
+                $reason = $analysis['reason'] ?? 'Profil incompatible.';
+                \Log::info('Application Rejected via AI', ['reason' => $reason]);
+                
+                $missing = '';
+                if (!empty($analysis['details']['missing_skills'])) {
+                    $missing = ' (Manque: ' . implode(', ', $analysis['details']['missing_skills']) . ')';
+                }
+                return back()->with('error', 'Candidature refusée par l\'IA : ' . $reason . $missing);
             }
         }
 
-        return back()->with('success', 'Votre candidature a été envoyée avec succès !');
+        Application::create([
+            'user_id' => $user->id,
+            'ofre_id' => $offre->id,
+            'score' => $score,
+            'status' => 'pending',
+            'ai_analysis' => $analysisData
+        ]);
+
+        $recruiter = User::find($offre->recruiter_id);
+        if ($recruiter) {
+            try {
+                $candidateName = $user->name;
+                $recruiter->notify(new NouvelleNotification("$candidateName a postulé à votre offre : " . $offre->title));
+            } catch (\Exception $e) {
+                // Log error but continue execution so the application is saved
+                \Log::error('Notification failed: ' . $e->getMessage());
+            }
+        }
+
+        return back()->with('success', 'Votre candidature a été envoyée avec succès ! Score de compatibilité : ' . $score . '%');
     }
 
     public function ofresByRecruteur()
@@ -83,7 +142,7 @@ class offresController extends Controller
         $recruiter = Recruteur::find($user->id); 
         
         $entreprise = $recruiter->entreprises()->first(); 
-        $offres = $recruiter->offres()->get();
+        $offres = $recruiter->offres()->with('applications')->get();
 
         return view('pages.recruiter_offres', compact('recruiter', 'entreprise', 'offres'));
     }
