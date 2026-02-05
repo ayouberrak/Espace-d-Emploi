@@ -79,6 +79,8 @@ class RecruiterController extends Controller
 
     public function storeJob(Request $request)
     {
+        \Log::info('StoreJob Request Recue', $request->all());
+
         $request->validate([
             'title' => 'required|string|max:255',
             'description' => 'required|string',
@@ -88,9 +90,18 @@ class RecruiterController extends Controller
         ]);
 
         $user = auth()->user();
+        \Log::info('StoreJob Attempt', ['user_id' => $user->id, 'role' => $user->role]);
+
         $recruiter = Recruteur::find($user->id);
+        
+        if (!$recruiter) {
+            \Log::error('StoreJob: Recruiter not found', ['id' => $user->id]);
+            return back()->with('error', 'Erreur: Profil recruteur non trouvé.');
+        }
+
         $entreprise = $recruiter->entreprises()->first();
         if (!$entreprise) {
+             \Log::warning('StoreJob: No enterprise', ['recruiter_id' => $recruiter->id]);
             return back()->with('error', 'Vous devez avoir une entreprise pour publier une offre.');
         }
 
@@ -137,18 +148,27 @@ class RecruiterController extends Controller
  
         $offer = Offres::where('id', $id)
                       ->where('recruiter_id', $user->id)
+                      ->with(['applications' => function($query) {
+                          $query->orderBy('score', 'desc');
+                      }, 'applications.user'])
                       ->firstOrFail();
         
+        // Legacy Logic
         $candidateIds = $offer->candidat ?? [];
+        $appUserIds = $offer->applications->pluck('user_id')->toArray();
+        $missingIds = array_diff($candidateIds, $appUserIds);
 
-        $candidates = [];
-        
-        if (!empty($candidateIds)) {
-            $candidates = \App\Models\User::with('profile')
-                                         ->whereIn('id', $candidateIds)
+        $legacyCandidates = [];
+        if (!empty($missingIds)) {
+            $legacyCandidates = \App\Models\User::with('profile')
+                                         ->whereIn('id', $missingIds)
                                          ->get();
         }
 
-        return view('recruiter.offer_details', compact('offer', 'candidates'));
+        return view('recruiter.offer_details', [
+            'offer' => $offer,
+            'applications' => $offer->applications,
+            'legacyCandidates' => $legacyCandidates
+        ]);
     }
 }
