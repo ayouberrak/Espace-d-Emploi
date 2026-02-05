@@ -37,4 +37,16 @@ class Offres extends Model
     {
         return $this->belongsTo(Recruteur::class, 'recruiter_id');
     }
+
+    public function applications()
+    {
+        return $this->hasMany(Application::class, 'ofre_id');
+    }
+
+    public function getApplicantsCountAttribute()
+    {
+        $jsonCandidats = $this->candidat ?? [];
+        $appCandidats = $this->applications->pluck('user_id')->toArray();
+        return count(array_unique(array_merge($jsonCandidats, $appCandidats)));
+    }
 }
