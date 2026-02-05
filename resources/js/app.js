@@ -7,19 +7,16 @@ if (window.userId) {
             console.log('Notification received via .notification():', notification);
             let message = notification.message || notification.data?.message || JSON.stringify(notification);
 
-            // Show Toast
             if (typeof showToast === 'function') {
                 showToast(message, 'info');
             } else {
                 alert(message);
             }
 
-            // Update Badge
             const badge = document.getElementById('notification-badge');
             if (badge) {
                 badge.style.display = 'block';
             } else {
-                // Create badge if not exists
                 const btn = document.querySelector('.relative.group button') || document.querySelector('.relative[x-data] button');
                 if (btn) {
                     const newBadge = document.createElement('span');
