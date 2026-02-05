@@ -12,22 +12,15 @@ use Illuminate\Support\Facades\Http;
 
 class CheckProfile extends Tool
 {
-    /**
-     * The tool's description.
-     */
     protected string $description = <<<'MARKDOWN'
         verifier si un user est eligible pour une offre .
     MARKDOWN;
 
-    /**
-     * Handle the tool request.
-     */
-    /**
-     * Handle the tool request.
-     */
+
     public function handle(Request $request): Response
     {
         $input = $request->all();
+        
         $user = User::with('profile')->find($input['user_id']);
         $offre = Offres::find($input['ofre_id']);
 
@@ -50,9 +43,6 @@ class CheckProfile extends Tool
         ]);
     }
 
-    /**
-     * Static verification method usable by Controllers
-     */
     public static function verify(User $user, Offres $offre): array
     {
         $profile = $user->profile; 
@@ -100,8 +90,7 @@ class CheckProfile extends Tool
         }
         ";
 
-        // Utilisation de Google Gemini (Gratuit)
-        // Modèle: gemini-2.5-flash (Disponible avec votre clé)
+        // gemini-2.5-flash
         $apiKey = env('GEMINI_API_KEY');
         $url = "https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash:generateContent?key={$apiKey}";
 
@@ -125,20 +114,24 @@ class CheckProfile extends Tool
             if ($response->failed()) {
                 $errorBody = $response->json();
                 $errorMessage = $errorBody['error']['message'] ?? $response->body();
-                return self::getMockAnalysis($user, $offre, "ERREUR GEMINI ({$response->status()}): $errorMessage");
+                return [
+                    'status' => 'error',
+                    'message' => "ERREUR GEMINI ({$response->status()}): $errorMessage"
+                ];
             }
 
             $geminiBody = $response->json();
             
-            // Safety check for candidates
             if (empty($geminiBody['candidates'][0]['content']['parts'][0]['text'])) {
                  \Log::warning('Gemini Empty Response', ['body' => $geminiBody]);
-                 return self::getMockAnalysis($user, $offre, "REPONSE GEMINI VIDE/FILTRÉE");
+                 return [
+                    'status' => 'error',
+                    'message' => "REPONSE GEMINI VIDE/FILTRÉE"
+                 ];
             }
 
             $rawContent = $geminiBody['candidates'][0]['content']['parts'][0]['text'];
             
-            // Nettoyage du markdown si présent ( ```json ... ``` )
             $rawContent = str_replace(['```json', '```'], '', $rawContent);
             $parsed = json_decode($rawContent, true);
 
@@ -149,71 +142,16 @@ class CheckProfile extends Tool
 
         } catch (\Throwable $e) {
             \Log::error('CheckProfile Error', ['message' => $e->getMessage()]);
-            return self::getMockAnalysis($user, $offre, "EXCEPTION: " . $e->getMessage());
+            return [
+                'status' => 'error',
+                'message' => "EXCEPTION: " . $e->getMessage()
+            ];
         }
     }
 
-    private static function getMockAnalysis(User $user, Offres $offre, string $errorContext = null)
-    {
-        // Récupération sécurisée des compétences (tableaux ou chaînes)
-        $userSkills = $user->profile->skills ?? [];
-        if (is_string($userSkills)) {
-            $userSkills = array_map('trim', explode(',', $userSkills));
-        }
 
-        $offerSkills = $offre->competences ?? [];
-        if (is_string($offerSkills)) {
-            $offerSkills = array_map('trim', explode(',', $offerSkills));
-        }
 
-        // Comparaison basique (sensible à la casse pour faire simple, ou strcasecmp pour mieux)
-        $matchingSkills = [];
-        $missingSkills = [];
 
-        foreach ($offerSkills as $oS) {
-            $found = false;
-            foreach ($userSkills as $uS) {
-                if (strcasecmp($oS, $uS) === 0) {
-                    $matchingSkills[] = $oS;
-                    $found = true;
-                    break;
-                }
-            }
-            if (!$found) {
-                $missingSkills[] = $oS;
-            }
-        }
-
-        // Calcul du score simple
-        $total = count($offerSkills);
-        $matches = count($matchingSkills);
-        
-        // Score de base + petit bonus aléatoire pour faire "IA"
-        $baseScore = $total > 0 ? ($matches / $total) * 100 : 50;
-        $finalScore = min(98, max(10, (int)$baseScore));
-
-        $eligible = $finalScore >= 50;
-        
-        $reasonPrefix = $errorContext ? "🚨 [MODE SIMULATION - $errorContext] " : "Analyse basée sur les compétences clés.";
-
-        return [
-            'status' => 'success',
-            'analysis' => [
-                'eligible' => $eligible,
-                'score' => $finalScore,
-                'reason' => $reasonPrefix . " Le candidat possède " . count($matchingSkills) . " des " . count($offerSkills) . " compétences requises.",
-                'details' => [
-                    'strengths' => !empty($matchingSkills) ? $matchingSkills : ['Motivation', 'Potentiel'],
-                    'weaknesses' => !empty($missingSkills) ? ['Besoin de formation technique'] : [],
-                    'missing_skills' => $missingSkills
-                ]
-            ]
-        ];
-    }
-
-    /**
-     * Helper to safely implode array even if it contains arrays/objects
-     */
     private static function safeImplode($input): string
     {
         if (!is_array($input)) {
@@ -222,7 +160,6 @@ class CheckProfile extends Tool
 
         return implode(', ', array_map(function($item) {
             if (is_array($item) || is_object($item)) {
-                // If the item has a 'title' or 'name', use it (common for experience/projects)
                 if (is_array($item)) {
                     return $item['title'] ?? $item['name'] ?? json_encode($item);
                 }
@@ -232,11 +169,6 @@ class CheckProfile extends Tool
         }, $input));
     }
 
-    /**
-     * Get the tool's input schema.
-     *
-     * @return array<string, \Illuminate\Contracts\JsonSchema\JsonSchema>
-     */
     public function schema(JsonSchema $schema): array
     {
         return [
