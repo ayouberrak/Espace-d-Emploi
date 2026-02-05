@@ -34,9 +34,9 @@
                         </div>
 
                         <div class="flex flex-wrap gap-4">
-                            @auth
+                                @auth
                                 @php
-                                    $hasApplied = in_array(auth()->id(), $offre->candidat ?? []);
+                                    $hasApplied = $offre->applications->contains('user_id', auth()->id()) || in_array(auth()->id(), $offre->candidat ?? []);
                                     $isRecruiter = auth()->user()->role === 'recruiter';
                                     $isOwner = $isRecruiter && ($offre->recruiter_id === auth()->id());
                                     $isClosed = $offre->status === 'Closed';
@@ -107,6 +107,102 @@
                     </div>
                 </div>
             </div>
+
+            @if(auth()->check() && auth()->user()->role === 'recruiter' && $offre->recruiter_id === auth()->id())
+            <div class="bg-white rounded-2xl p-8 border border-slate-100 shadow-sm mt-6">
+                <h2 class="text-xl font-bold text-slate-900 mb-6">Candidats triés par IA</h2>
+                
+                @if($applications->count() > 0)
+                    <div class="space-y-4">
+                        @foreach($applications as $app)
+                            <div class="border border-slate-200 rounded-xl p-6 hover:shadow-md transition-all bg-slate-50">
+                                <div class="flex flex-col md:flex-row justify-between items-start md:items-center gap-4 mb-4">
+                                    <div class="flex items-center gap-4">
+                                        <div class="w-12 h-12 bg-indigo-100 text-indigo-700 rounded-full flex items-center justify-center font-bold text-xl">
+                                            {{ substr($app->user->name, 0, 1) }}
+                                        </div>
+                                        <div>
+                                            <h3 class="font-bold text-slate-900 text-lg">{{ $app->user->name }}</h3>
+                                            <p class="text-sm text-slate-500">{{ $app->created_at->diffForHumans() }}</p>
+                                        </div>
+                                    </div>
+                                    
+                                    <div class="flex items-center gap-3">
+                                        <div class="flex flex-col items-end">
+                                            <span class="text-2xl font-black {{ $app->score >= 70 ? 'text-green-600' : ($app->score >= 40 ? 'text-amber-500' : 'text-red-500') }}">
+                                                {{ $app->score }}%
+                                            </span>
+                                            <span class="text-xs font-bold text-slate-400 uppercase tracking-wider">Compatibilité</span>
+                                        </div>
+                                        <div class="w-12 h-12 rounded-full border-4 {{ $app->score >= 70 ? 'border-green-100 text-green-600' : ($app->score >= 40 ? 'border-amber-100 text-amber-500' : 'border-red-100 text-red-500') }} flex items-center justify-center">
+                                            @if($app->score >= 70)
+                                                <svg class="w-6 h-6" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7" /></svg>
+                                            @elseif($app->score >= 40)
+                                                <svg class="w-6 h-6" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z" /></svg>
+                                            @else
+                                                <svg class="w-6 h-6" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" /></svg>
+                                            @endif
+                                        </div>
+                                    </div>
+                                </div>
+
+                                @if($app->ai_analysis)
+                                    <div class="grid grid-cols-1 md:grid-cols-2 gap-4 text-sm mt-4 pt-4 border-t border-slate-200">
+                                        @if(!empty($app->ai_analysis['details']['missing_skills']))
+                                            <div>
+                                                <strong class="text-rose-600 block mb-1"> Compétences manquantes :</strong>
+                                                <ul class="list-disc list-inside text-slate-600">
+                                                    @foreach($app->ai_analysis['details']['missing_skills'] as $skill)
+                                                        <li>{{ $skill }}</li>
+                                                    @endforeach
+                                                </ul>
+                                            </div>
+                                        @endif
+                                        
+                                        @if(!empty($app->ai_analysis['details']['strengths']))
+                                            <div>
+                                                <strong class="text-green-600 block mb-1"> Points forts :</strong>
+                                                <ul class="list-disc list-inside text-slate-600">
+                                                    @foreach($app->ai_analysis['details']['strengths'] as $strength)
+                                                        <li>{{ $strength }}</li>
+                                                    @endforeach
+                                                </ul>
+                                            </div>
+                                        @endif
+                                    </div>
+                                    <div class="mt-3 text-sm text-slate-500 italic">
+                                        "{{ $app->ai_analysis['reason'] ?? '' }}"
+                                    </div>
+                                @endif
+                            </div>
+                        @endforeach
+                    </div>
+                @else
+                    <div class="text-center py-10 text-slate-500">
+                        <p>Aucun candidat pour le moment.</p>
+                    </div>
+                @endif
+            </div>
+            
+            @if(count($legacyCandidates) > 0)
+            <div class="bg-white rounded-2xl p-8 border border-slate-100 shadow-sm mt-6">
+                <h2 class="text-xl font-bold text-slate-900 mb-6">Autres Candidats (Sans analyse IA)</h2>
+                <div class="space-y-4">
+                    @foreach($legacyCandidates as $lUser)
+                         <div class="border border-slate-200 rounded-xl p-6 hover:shadow-md transition-all bg-slate-50 flex items-center gap-4">
+                            <div class="w-12 h-12 bg-slate-200 text-slate-600 rounded-full flex items-center justify-center font-bold text-xl">
+                                {{ substr($lUser->name, 0, 1) }}
+                            </div>
+                            <div>
+                                <h3 class="font-bold text-slate-900 text-lg">{{ $lUser->name }}</h3>
+                                <p class="text-sm text-slate-500">Candidature standard</p>
+                            </div>
+                         </div>
+                    @endforeach
+                </div>
+            </div>
+            @endif
+            @endif
 
              <!-- About Company (Clean LinkedIn style) -->
             <div class="bg-white rounded-2xl p-8 border border-slate-100 shadow-sm">
