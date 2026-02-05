@@ -85,7 +85,6 @@ class offresController extends Controller
              return back()->with('error', 'Vous avez déjà postulé à cette offre.');
         }
 
-        // Vérification IA via CheckProfile Tool
         $check = CheckProfile::verify($user, $offre);
         
         \Log::info('Postuler Analysis', ['user' => $user->id, 'offer' => $offre->id, 'check' => $check]);
@@ -124,7 +123,6 @@ class offresController extends Controller
                 $candidateName = $user->name;
                 $recruiter->notify(new NouvelleNotification("$candidateName a postulé à votre offre : " . $offre->title));
             } catch (\Exception $e) {
-                // Log error but continue execution so the application is saved
                 \Log::error('Notification failed: ' . $e->getMessage());
             }
         }
