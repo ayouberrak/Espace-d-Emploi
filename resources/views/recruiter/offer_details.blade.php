@@ -109,9 +109,12 @@
                     </div>
                 @endif
                 
-                <div class="mt-5 pt-3 border-t border-slate-50">
-                    <a href="{{ route('profile', $app->user->id) }}" class="flex items-center justify-center w-full py-2.5 bg-slate-900 text-white text-xs font-bold rounded-lg hover:bg-indigo-600 transition-colors shadow-sm hover:shadow-indigo-500/30">
+                <div class="mt-5 pt-3 border-t border-slate-50 flex gap-2">
+                    <a href="{{ route('profile', $app->user->id) }}" class="flex-grow flex items-center justify-center py-2.5 bg-slate-900 text-white text-xs font-bold rounded-lg hover:bg-indigo-600 transition-colors shadow-sm hover:shadow-indigo-500/30">
                         Voir le Profil Complet
+                    </a>
+                    <a href="{{ route('user.cv', $app->user->id) }}" class="flex items-center justify-center px-3 bg-indigo-50 text-indigo-600 rounded-lg hover:bg-indigo-100 transition-colors border border-indigo-100" title="Télécharger le CV">
+                         <svg class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4" /></svg>
                     </a>
                 </div>
             </div>
@@ -135,9 +138,12 @@
                         <span class="text-xs text-slate-400 bg-slate-100 px-2 py-0.5 rounded-full">Candidat (Legacy)</span>
                     </div>
                 </div>
-                <div class="mt-auto">
-                    <a href="{{ route('profile', $candidate->id) }}" class="block w-full text-center text-xs font-bold text-indigo-600 border border-indigo-100 hover:bg-indigo-50 py-2 rounded-lg transition-colors">
+                <div class="mt-auto flex gap-2">
+                    <a href="{{ route('profile', $candidate->id) }}" class="flex-grow block text-center text-xs font-bold text-indigo-600 border border-indigo-100 hover:bg-indigo-50 py-2 rounded-lg transition-colors">
                         Voir Profil
+                    </a>
+                     <a href="{{ route('user.cv', $candidate->id) }}" class="flex items-center justify-center px-3 bg-indigo-50 text-indigo-600 rounded-lg hover:bg-indigo-100 transition-colors border border-indigo-100" title="Télécharger le CV">
+                         <svg class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4" /></svg>
                     </a>
                 </div>
             </div>
