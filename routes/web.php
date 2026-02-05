@@ -44,4 +44,6 @@ Route::get('/network', [App\Http\Controllers\inviController::class, 'showInvi'])
 Route::post('/network/accept/{id?}',[inviController::class,'acceptInvi'])->name('acceptInvi');
 Route::delete('/network/decline/{id}', [inviController::class, 'declineInvi'])->name('declineInvi');
 
+Route::get('/user/{id}/cv', [App\Http\Controllers\PdfController::class, 'generateCv'])->name('user.cv');
+
 
