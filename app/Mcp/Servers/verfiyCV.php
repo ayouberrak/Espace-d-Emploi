@@ -3,6 +3,8 @@
 namespace App\Mcp\Servers;
 
 use Laravel\Mcp\Server;
+use App\Mcp\Tools\CheckProfile;
+
 
 class verfiyCV extends Server
 {
@@ -29,7 +31,7 @@ class verfiyCV extends Server
      * @var array<int, class-string<\Laravel\Mcp\Server\Tool>>
      */
     protected array $tools = [
-        //
+        CheckProfile::class,
     ];
 
     /**
