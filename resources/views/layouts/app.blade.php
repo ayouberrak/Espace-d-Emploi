@@ -302,6 +302,7 @@
             // Icon based on type
             let icon = '<svg class="w-5 h-5 text-emerald-500" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7" /></svg>';
             if(type === 'info') icon = '<svg class="w-5 h-5 text-blue-500" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" /></svg>';
+            if(type === 'error') icon = '<svg class="w-5 h-5 text-rose-500" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" /></svg>';
             
             toast.className = `pointer-events-auto flex items-center gap-3 bg-white border border-slate-100 shadow-[0_8px_30px_rgb(0,0,0,0.08)] px-5 py-4 rounded-2xl transform transition-all duration-500 translate-x-full opacity-0`;
             toast.innerHTML = `
@@ -318,22 +319,31 @@
                 toast.classList.remove('translate-x-full', 'opacity-0');
             });
             
-            // Remove after 3s
+            // Remove after 4s
             setTimeout(() => {
                 toast.classList.add('translate-x-full', 'opacity-0');
                 setTimeout(() => toast.remove(), 500);
             }, 4000);
         }
 
-        // Welcome Toast on Load
+        // Welcome Toast on Load & Session Messages
         document.addEventListener('DOMContentLoaded', () => {
-            setTimeout(() => {
-                showToast('Mode YouConnect Elite activé 🚀', 'success');
-            }, 1000);
-            
             // Smooth Page Transition
             document.body.classList.add('opacity-100');
             document.body.classList.remove('opacity-0');
+
+            // Session Messages
+            @if(session('success'))
+                setTimeout(() => showToast("{{ session('success') }}", 'success'), 500);
+            @endif
+
+            @if(session('error'))
+                setTimeout(() => showToast("{{ session('error') }}", 'error'), 500);
+            @endif
+
+            @if(session('info'))
+                setTimeout(() => showToast("{{ session('info') }}", 'info'), 500);
+            @endif
         });
     </script>
     <style>
